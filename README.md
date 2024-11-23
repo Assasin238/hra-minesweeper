@@ -9,4 +9,4 @@ Jednotlivé jazyky byly použity k vizualizaci stránky, správné funkčnosti, 
 
 Samotným úkolem ve hře "Minesweeper" je, ve mřížkovém hracím poli vyklikat všechna políčka která neobsahují bombu. Pokud se na políčku nachází bomba, hráč je "povinnen" označit dané políčko vlajkou. Pokud tak hráč neučiní či na dané políčko jednoduše kliknul, prohrává.
 
-*ukládání informací - Nickname + heslo(které je šifrováno pro bezpečnost), nejlepší čas splnění mapy, velikost mapy 
+*ukládání informací - Nickname + heslo(které je šifrováno pro bezpečnost), nejlepší čas splnění mapy, velikost mapy. 
