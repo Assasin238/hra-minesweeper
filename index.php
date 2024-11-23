@@ -27,7 +27,7 @@
 
     </header>
     <main>
-        <section id="uvod">
+        <section id="welcome">
             <h1>Welcome</h1>
             <!-- Button to start playing the game -->
             <a href="subpages/minesweeper.php" class="action_btn" id="playBTN">Play</a>
