@@ -1,0 +1,26 @@
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#game-grid {
+    border-collapse: collapse; /* Smaže mezery mezi buňkami */
+    margin: 0 auto;
+}
+
+#game-grid td {
+    width: 30px; /* Šířka buňky */
+    height: 30px; /* Výška buňky */
+    border: 1px solid #000; /* Černý rámeček */
+    text-align: center; /* Text na střed */
+    vertical-align: middle; /* Text na střed vertikálně */
+    font-size: 18px; /* Velikost textu */
+    background-color: #ccc; /* Výchozí barva buňky */
+}
+
+#game-grid td:active {
+    background-color: #aaa; /* Barva při kliknutí */
+}
+
