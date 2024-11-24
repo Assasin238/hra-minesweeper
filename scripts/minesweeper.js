@@ -49,6 +49,14 @@ function handleCellClick(row, col, cellElement) {
     cellElement.removeEventListener('click', () => handleCellClick(row, col, cellElement));
 }
 
+// Pole pro sledování navštívených buněk (abychom se vyhnuli zacyklení)
+let visited = [];
+
+// Funkce pro inicializaci sledování navštívených buněk
+function initializeVisited(rows, cols) {
+    visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+}
+
 // Funkce pro odhalení okolních prázdných buněk
 function revealEmptyCells(row, col) {
     const directions = [
@@ -57,18 +65,31 @@ function revealEmptyCells(row, col) {
         [1, -1], [1, 0], [1, 1]     // Spodní řádek
     ];
 
+    // Pokud jsme už tuto buňku navštívili, neprovádíme nic
+    if (visited[row][col]) return;
+
+    // Označíme buňku jako navštívenou
+    visited[row][col] = true;
+
     directions.forEach(([dx, dy]) => {
         const newRow = row + dx;
         const newCol = col + dy;
 
-        // Ověření, zda buňka existuje a není už odhalená
+        // Ověření, zda buňka existuje, není již navštívená a není mina
         if (
             newRow >= 0 && newRow < gameGrid.length &&
-            newCol >= 0 && newCol < gameGrid[0].length
+            newCol >= 0 && newCol < gameGrid[0].length &&
+            !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
         ) {
             const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
-            if (adjacentCell && adjacentCell.style.backgroundColor !== '#ddd') {
-                adjacentCell.click(); // Simulujeme kliknutí
+            
+            // Pokud je hodnota buňky 0, odhalíme ji a pokračujeme v odhalování okolí
+            adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
+            adjacentCell.style.backgroundColor = '#ddd'; // Odhalení buňky
+
+            // Pokud je hodnota 0, odhalíme okolní buňky rekurzivně
+            if (gameGrid[newRow][newCol] === 0) {
+                revealEmptyCells(newRow, newCol);
             }
         }
     });
@@ -80,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cols = 10;
     const mineCount = 10;
 
+    initializeVisited(rows, cols); // Inicializace sledování navštívených buněk
     createMines(rows, cols, mineCount); // Generování min
     calculateNumbers(rows, cols); // Výpočet čísel
     createGameGrid(rows, cols); // Vykreslení mřížky
