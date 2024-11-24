@@ -24,3 +24,12 @@
     background-color: #aaa; /* Barva při kliknutí */
 }
 
+footer{
+    background: transparent;
+    /*color: #ccc;*/
+    color: black;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+}
