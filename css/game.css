@@ -1,3 +1,7 @@
+body{
+    background-color: rgb(128, 141, 128);
+}
+
 #game-container {
     display: flex;
     justify-content: center;

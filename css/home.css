@@ -97,8 +97,9 @@ section#welcome {
 /* Styling for the play button */
 #playBTN {
     margin-top: 50px;
-    width: 90px;
-    height: 30px;
+    width: 150px;
+    height: 50px;
+    font-size: 2rem;
 }
 
 footer{

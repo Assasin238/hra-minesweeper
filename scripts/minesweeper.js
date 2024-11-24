@@ -10,8 +10,9 @@ function createGameGrid(rows, cols) {
             const cellElement = document.createElement('td');
             cellElement.id = `cell-${row}-${col}`; // Nastavíme ID pro buňku
 
-            // Přidáme event listener pro kliknutí na buňku
+            // Přidáme event listenery pro kliknutí
             cellElement.addEventListener('click', () => handleCellClick(row, col, cellElement));
+            addRightClickListener(cellElement, row, col); // Přidáme pravé kliknutí
 
             rowElement.appendChild(cellElement);
         }
@@ -23,30 +24,27 @@ function createGameGrid(rows, cols) {
 
 // Funkce pro zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
-    const cellValue = gameGrid[row][col];
+    if (cellElement.textContent === '🚩') return; // Ignorujeme vlaječky
 
-    // Logování pro kontrolu kliknutí
+    const cellValue = gameGrid[row][col];
     console.log(`Klik na buňku: Řádek ${row}, Sloupec ${col}, Hodnota: ${cellValue}`);
 
-    // Pokud je mina, hra končí
     if (cellValue === 'M') {
-        cellElement.textContent = '💣'; // Zobrazí minu
-        cellElement.style.backgroundColor = 'red'; // Zvýrazní výbuch
-        alert('Game Over!'); // Hra končí
+        cellElement.textContent = '💣';
+        cellElement.style.backgroundColor = 'red';
+        alert('Game Over!');
         return;
     }
 
-    // Zobraz hodnotu buňky
     cellElement.textContent = cellValue === 0 ? '' : cellValue;
-    cellElement.style.backgroundColor = '#ddd'; // Odhalení buňky
+    cellElement.style.backgroundColor = '#ddd';
 
-    // Pokud je hodnota buňky 0, odhalíme okolní buňky
     if (cellValue === 0) {
         revealEmptyCells(row, col);
     }
 
-    // Zamezíme opakovanému kliknutí
     cellElement.removeEventListener('click', () => handleCellClick(row, col, cellElement));
+    checkWin(); // Kontrola vítězství po každém kliknutí
 }
 
 // Pole pro sledování navštívených buněk (abychom se vyhnuli zacyklení)
@@ -99,7 +97,7 @@ function revealEmptyCells(row, col) {
 document.addEventListener('DOMContentLoaded', () => {
     const rows = 10;
     const cols = 10;
-    const mineCount = 10;
+    mineCount = 10; // Nastavíme počet min
 
     initializeVisited(rows, cols); // Inicializace sledování navštívených buněk
     createMines(rows, cols, mineCount); // Generování min
@@ -110,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Generování min do mřížky
 let gameGrid = []; // Pro uložení stavu hry (miny a čísla)
+let mineCount = 0; // Počet min // Pro uložení stavu hry (miny a čísla)
 
 function createMines(rows, cols, mineCount) {
     // Naplníme mřížku nulami (0 = žádná mina)
@@ -161,4 +160,50 @@ function calculateNumbers(rows, cols) {
             gameGrid[row][col] = mineCount; // Uložíme počet min
         }
     }
+}
+
+function checkWin() {
+    let allCellsCorrect = true;
+
+    for (let row = 0; row < gameGrid.length; row++) {
+        for (let col = 0; col < gameGrid[row].length; col++) {
+            const cellElement = document.getElementById(`cell-${row}-${col}`);
+            const cellValue = gameGrid[row][col];
+
+            // Debug: Log každého políčka pro kontrolu
+            console.log(`Kontrola buňky [${row}, ${col}]: Hodnota = ${cellValue}, Text = "${cellElement.textContent}", Pozadí = "${cellElement.style.backgroundColor}"`);
+
+            // Kontrola políček bez miny
+            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(221, 221, 221)') { // Pozadí odhalené buňky
+                console.log(`Buňka [${row}, ${col}] nebyla odhalena!`);
+                allCellsCorrect = false;
+            }
+
+            // Kontrola políček s minou
+            if (cellValue === 'M' && cellElement.textContent !== '🚩') {
+                console.log(`Buňka [${row}, ${col}] nemá správně vlaječku!`);
+                allCellsCorrect = false;
+            }
+        }
+    }
+
+    if (allCellsCorrect) {
+        alert('Gratulujeme! Vyhrál(a) jste hru! 🎉');
+    }
+}
+
+function addRightClickListener(cellElement, row, col) {
+    cellElement.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+
+        if (cellElement.style.backgroundColor === '#ddd') return; // Ignorujeme odhalené buňky
+
+        if (cellElement.textContent === '🚩') {
+            cellElement.textContent = '';
+        } else {
+            cellElement.textContent = '🚩';
+        }
+
+        checkWin(); // Kontrola vítězství po každém označení vlaječky
+    });
 }

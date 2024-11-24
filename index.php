@@ -12,10 +12,6 @@
 <header>
         <div class="navbar">
             <div class="logo"><a href="#" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
-            <ul class="links">
-                <!-- Navigation links -->
-                <li><a href="subpages/minesweeper.php">Game</a></li>
-            </ul>
             <!-- Privacy action button -->
             <a href="subpages/registration.php" class="action_btn">Sign up</a>
             <a href="subpages/login.php" class="action_btn">Log in</a>
@@ -27,13 +23,23 @@
 
     </header>
     <main>
+        <div class="container">
         <section id="welcome">
-            <h1>Welcome</h1>
+            <h1><span class="auto-type"></span></h1>
             <!-- Button to start playing the game -->
-            <a href="subpages/minesweeper.php" class="action_btn" id="playBTN">Play</a>
+            <a href="subpages/minesweeper.php" class="action_btn" id="playBTN">PLAY</a>
         </section>
+        </div>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script>
+        var typed = new Typed(".auto-type", {
+            strings: ["Minesweeper", "Démineur", "Buscaminas", "Miny", "Campo Minado", "扫雷" ],
+            typeSpeed: 150,
+            backSpeed: 150,
+            loop: true        
+        })
+    </script>
 <?php include "php/footer.php" ?>
 </body>
 </html>
