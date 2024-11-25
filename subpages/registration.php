@@ -11,11 +11,13 @@
 <body>
     <div class="container">
         <?php
-        if (isset($_POST["submit"])){
+        if (isset($_POST["submit"])) {
             $nickName = $_POST["nickname"];
             $email = $_POST["email"];
             $password = $_POST["password"];
-            $passwordRepeat = $_POST["fullname"];
+            $passwordRepeat = $_POST["repeat_password"];
+            
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
             $errors = array();
 
@@ -31,11 +33,28 @@
             if ($password!==$passwordRepeat){
                 array_push($errors, "Password does not match");
             }
+
+            if (count($errors)>0) {
+                foreach ($errors as $error) {
+                    echo "<div>$error</div>";
+                }
+            }else{
+                require_once "database.php"
+                $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
+                $stmt = mysqli_stmt_init($conn);
+                $prepareStmt = mysqli_stmt_perpare($stmt,$sql);
+                if ($prepareStmt){
+                    mysqli_stmt_bind_param($stmt, "sss",$nickName, $email, $passwordHash);
+                    mysqli_stmt_execute($stmt);
+                    echo "<div class="alert alert-success"></div>";
+                }
+            }
+
         } 
         ?>
         <form action="registration.php" method="post">
             <div class="form-group">
-                <input type="text" class="form-control" name="NickName" placeholder="NickName:">
+                <input type="text" class="form-control" name="nickname" placeholder="NickName:">
             </div>
             <div class="form-group">
                 <input type="email" class="form-control" name="email" placeholder="Email:">

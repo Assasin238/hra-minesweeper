@@ -207,3 +207,19 @@ function addRightClickListener(cellElement, row, col) {
         checkWin(); // Kontrola vítězství po každém označení vlaječky
     });
 }
+
+const addRightClickListener = (cellElement, row, col) => {
+    cellElement.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+
+        if (cellElement.style.backgroundColor === '#ddd') return; // Ignorujeme odhalené buňky
+
+        if (cellElement.textContent === '🚩') {
+            cellElement.textContent = '';
+        } else {
+            cellElement.textContent = '🚩';
+        }
+
+        checkWin(); // Kontrola vítězství po každém označení vlaječky
+    });
+}
