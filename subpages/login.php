@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
-    <title>Minesweeper Game - Login</title>
-</head>
-<body>
+
 <?php
 session_start();
 if (isset($_SESSION["user"])) {
@@ -20,12 +12,12 @@ if (isset($_SESSION["user"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Minesweeper Game - Login</title>
     <link rel="stylesheet" href="../../styles/login_register.css">
 </head>
 <body>
     <header class="header">
-        <a href="../../index.php" class="logo">Dictionary Learning</a>
+        <a href="../index.php" class="logo">Dictionary Learning</a>
         <div class="header-buttons">
             <a href="login.php" class="btn">Sign In</a>
             <a href="registration.php" class="btn">Sign Up</a>
@@ -47,7 +39,7 @@ if (isset($_SESSION["user"])) {
                     if (password_verify($password, $user["password"])){
                         session_start();
                         $_SESSION["user"] = "yes";
-                        header("Location: ../../index.php");
+                        header("Location: ../index.php");
                         die();
                     } else {
                         echo "<div class='error-msg'>Password does not match</div>";

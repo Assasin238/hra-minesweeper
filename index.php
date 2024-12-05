@@ -1,3 +1,10 @@
+<?php
+session_start();
+if(!isset($_SESSION["user"])){
+    header("Location: subpages/login.php");
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +23,7 @@
             <!-- Privacy action button -->
             <a href="subpages/registration.php" class="action_btn">Sign up</a>
             <a href="subpages/login.php" class="action_btn">Log in</a>
+            <a href="subpages/logout.php">Logout</a>
             <!-- Toggle button for responsive menu -->
             <div class="toggle_btn">
                 <i class="fa-solid fa-bars"></i>

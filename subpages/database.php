@@ -1,9 +1,9 @@
 <?php
 
 $hostName = "localhost";
-$dbUser = "root";
+$dbUser = "harnachp";
 $dbPassword = "";
-$dbName = "login_register";
+$dbName = "harnachp_login_register";
 $conn = mysqli_connect($hostName, $dbUser, $dbPassword, $dbName);
 if (!$conn) {
     die("Something went wrong:");
