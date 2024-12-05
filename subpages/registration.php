@@ -9,67 +9,77 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
         <?php
-        if (isset($_POST["submit"])) {
-            $nickName = $_POST["nickname"];
-            $email = $_POST["email"];
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            // Získání dat z formuláře
+            $nickName = trim($_POST["nickname"]);
+            $email = trim($_POST["email"]);
             $password = $_POST["password"];
             $passwordRepeat = $_POST["repeat_password"];
             
-            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $errors = [];
 
-            $errors = array();
+            // Validace dat
+            if (empty($nickName) || empty($email) || empty($password) || empty($passwordRepeat)) {
+                $errors[] = "Všechny pole jsou povinné.";
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Zadejte platný email.";
+            }
+            if (strlen($password) < 12) {
+                $errors[] = "Heslo musí mít alespoň 12 znaků.";
+            }
+            if ($password !== $passwordRepeat) {
+                $errors[] = "Hesla se neshodují.";
+            }
 
-            if (empty($nickName) OR empty($email) OR empty($password) OR empty($passwordRepeat)){
-                array_push($errors, "Všechny pole jsou povinné");
-            }
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
-                array_push($errors, "Email is not valid");
-            }
-            if (strlen($password)<12) {
-                array_push($errors, "Password must be at least 12 characters long");
-            }
-            if ($password!==$passwordRepeat){
-                array_push($errors, "Password does not match");
-            }
-
-            if (count($errors)>0) {
+            // Pokud jsou chyby, zobrazíme je
+            if (!empty($errors)) {
                 foreach ($errors as $error) {
-                    echo "<div>$error</div>";
+                    echo "<div class='alert alert-danger'>$error</div>";
                 }
-            }else{
-                require_once "database.php"
+            } else {
+                // Zpracování hesla a vložení dat do databáze
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                require_once "database.php";
+
                 $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
                 $stmt = mysqli_stmt_init($conn);
-                $prepareStmt = mysqli_stmt_perpare($stmt,$sql);
-                if ($prepareStmt){
-                    mysqli_stmt_bind_param($stmt, "sss",$nickName, $email, $passwordHash);
-                    mysqli_stmt_execute($stmt);
-                    echo "<div class="alert alert-success"></div>";
+
+                if (mysqli_stmt_prepare($stmt, $sql)) {
+                    mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        echo "<div class='alert alert-success'>Registrace byla úspěšná!</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>Něco se pokazilo při vkládání dat.</div>";
+                    }
+                } else {
+                    echo "<div class='alert alert-danger'>Chyba v SQL dotazu: " . htmlspecialchars(mysqli_error($conn)) . "</div>";
                 }
             }
-
-        } 
+        }
         ?>
-        <form action="registration.php" method="post">
-            <div class="form-group">
-                <input type="text" class="form-control" name="nickname" placeholder="NickName:">
+        <form action="registration.php" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="nickname" class="form-label">NickName:</label>
+                <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Zadejte svůj přezdívku">
             </div>
-            <div class="form-group">
-                <input type="email" class="form-control" name="email" placeholder="Email:">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Zadejte svůj email">
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="Password:">
+            <div class="mb-3">
+                <label for="password" class="form-label">Heslo:</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Zadejte heslo">
             </div>
-            <div class="form-group">
-                <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password:">
+            <div class="mb-3">
+                <label for="repeat_password" class="form-label">Zopakujte heslo:</label>
+                <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Zadejte heslo znovu">
             </div>
-            <div class="form-btn">
-                <input type="submit" class="btn btn-primary" value="Register" name="submit">
-            </div>
+            <button type="submit" class="btn btn-primary">Registrovat</button>
         </form>
     </div>
-
 </body>
 </html>

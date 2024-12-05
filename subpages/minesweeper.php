@@ -14,7 +14,7 @@
     </header>
 <div id="game-container">
         <table id="game-grid"></table>
-    </div>
+</div>
 <?php include "../php/footer.php" ?>
 </body>
 </html>
