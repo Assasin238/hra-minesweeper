@@ -17,7 +17,7 @@ if (isset($_SESSION["user"])) {
 </head>
 <body>
     <header class="header">
-        <a href="../index.php" class="logo">Dictionary Learning</a>
+        <a href="../index.php" class="logo">Minesweeper</a>
         <div class="header-buttons">
             <a href="login.php" class="btn">Sign In</a>
             <a href="registration.php" class="btn">Sign Up</a>
