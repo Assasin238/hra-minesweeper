@@ -10,7 +10,18 @@
 </head>
 <body>
 <header>
-        <h1>Hra Minesweeper</h1>
+        <div class="navbar">
+            <div class="logo"><a href="../index.php" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
+            <!-- Privacy action button -->
+            <a href="registration.php" class="action_btn">Sign up</a>
+            <a href="login.php" class="action_btn">Log in</a>
+            <a href="logout.php">Logout</a>
+            <!-- Toggle button for responsive menu -->
+            <div class="toggle_btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+
     </header>
 <div id="game-container">
         <table id="game-grid"></table>

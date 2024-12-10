@@ -1,3 +1,10 @@
+// Sledování stavu hry
+let gameGrid = []; // Stav mřížky (miny a čísla)
+let mineCount = 0; // Počet min
+let isFirstClick = true; // Indikátor, zda hráč provedl první kliknutí
+let visited = []; // Sledování navštívených buněk (pro odhalování okolí)
+// Sledování počtu vlajek
+let flagsPlaced = 0; // Počet položených vlajek
 // Funkce pro vytvoření mřížky hry
 function createGameGrid(rows, cols) {
     const gameGridElement = document.getElementById('game-grid');
@@ -18,19 +25,37 @@ function createGameGrid(rows, cols) {
         }
 
         gameGridElement.appendChild(rowElement);
-        console.log("Inicializuji mřížku...");
-        console.log("Mřížka po generování: ", gameGrid);
     }
+
+    initializeGameGrid(rows, cols); // Inicializace mřížky (prázdné hodnoty)
 }
 
+// Inicializace prázdné mřížky
+function initializeGameGrid(rows, cols) {
+    gameGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
+}
+
+// Funkce pro inicializaci sledování navštívených buněk
+function initializeVisited(rows, cols) {
+    visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+}
 
 // Funkce pro zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
     if (cellElement.textContent === '🚩') return; // Ignorujeme vlaječky
 
-    const cellValue = gameGrid[row][col];
-    console.log(`Klik na buňku: Řádek ${row}, Sloupec ${col}, Hodnota: ${cellValue}`);
+    if (isFirstClick) {
+        // Generuj miny s bezpečnou oblastí
+        createMinesWithSafeArea(row, col, gameGrid.length, gameGrid[0].length, mineCount);
 
+        // Spočítej čísla
+        calculateNumbers(gameGrid.length, gameGrid[0].length);
+
+        // První kliknutí bylo provedeno
+        isFirstClick = false;
+    }
+
+    const cellValue = gameGrid[row][col];
     if (cellValue === 'M') {
         cellElement.textContent = '💣';
         cellElement.style.backgroundColor = 'red';
@@ -45,113 +70,46 @@ function handleCellClick(row, col, cellElement) {
         revealEmptyCells(row, col);
     }
 
-    cellElement.removeEventListener('click', () => handleCellClick(row, col, cellElement));
-    checkWin(); // Kontrola vítězství po každém kliknutí
+    checkWin(); // Kontrola vítězství
 }
 
-// Pole pro sledování navštívených buněk (abychom se vyhnuli zacyklení)
-let visited = [];
-
-// Funkce pro inicializaci sledování navštívených buněk
-function initializeVisited(rows, cols) {
-    visited = Array.from({ length: rows }, () => Array(cols).fill(false));
-}
-
-// Funkce pro odhalení okolních prázdných buněk
-function revealEmptyCells(row, col) {
-    const directions = [
-        [-1, -1], [-1, 0], [-1, 1], // Horní řádek
-        [0, -1],         [0, 1],    // Levá a pravá strana
-        [1, -1], [1, 0], [1, 1]     // Spodní řádek
-    ];
-
-    // Pokud jsme už tuto buňku navštívili, neprovádíme nic
-    if (visited[row][col]) return;
-
-    // Označíme buňku jako navštívenou
-    visited[row][col] = true;
-
-    directions.forEach(([dx, dy]) => {
-        const newRow = row + dx;
-        const newCol = col + dy;
-
-        // Ověření, zda buňka existuje, není již navštívená a není mina
-        if (
-            newRow >= 0 && newRow < gameGrid.length &&
-            newCol >= 0 && newCol < gameGrid[0].length &&
-            !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
-        ) {
-            const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
-            
-            // Pokud je hodnota buňky 0, odhalíme ji a pokračujeme v odhalování okolí
-            adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
-            adjacentCell.style.backgroundColor = '#ddd'; // Odhalení buňky
-
-            // Pokud je hodnota 0, odhalíme okolní buňky rekurzivně
-            if (gameGrid[newRow][newCol] === 0) {
-                revealEmptyCells(newRow, newCol);
-            }
-        }
-    });
-}
-
-// Spuštění hry při načtení stránky
-document.addEventListener('DOMContentLoaded', () => {
-    const rows = 10;
-    const cols = 10;
-    mineCount = 10; // Nastavíme počet min
-
-    initializeVisited(rows, cols); // Inicializace sledování navštívených buněk
-    createMines(rows, cols, mineCount); // Generování min
-    calculateNumbers(rows, cols); // Výpočet čísel
-    createGameGrid(rows, cols); // Vykreslení mřížky
-    console.log(gameGrid); // Pro kontrolu stavu mřížky
-});
-
-// Generování min do mřížky
-let gameGrid = []; // Pro uložení stavu hry (miny a čísla)
-let mineCount = 0; // Počet min // Pro uložení stavu hry (miny a čísla)
-
-function createMines(rows, cols, mineCount) {
-    // Naplníme mřížku nulami (0 = žádná mina)
-    gameGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
-
+// Funkce pro generování min s bezpečnou oblastí
+function createMinesWithSafeArea(startRow, startCol, rows, cols, mineCount) {
+    initializeGameGrid(rows, cols); // Reset mřížky na začátku
     let minesPlaced = 0;
 
     while (minesPlaced < mineCount) {
         const row = Math.floor(Math.random() * rows);
         const col = Math.floor(Math.random() * cols);
 
-        // Pokud na této pozici ještě není mina, umístíme ji
+        // Vynecháme bezpečnou oblast kolem první buňky
+        if (Math.abs(row - startRow) <= 1 && Math.abs(col - startCol) <= 1) {
+            continue;
+        }
+
         if (gameGrid[row][col] === 0) {
-            gameGrid[row][col] = 'M'; // 'M' označuje minu
+            gameGrid[row][col] = 'M';
             minesPlaced++;
         }
     }
-    console.log("Inicializuji mřížku...");
-    console.log("Mřížka po generování: ", gameGrid);
 }
 
 // Výpočet čísel kolem min
 function calculateNumbers(rows, cols) {
     const directions = [
-        [-1, -1], [-1, 0], [-1, 1], // Horní řádek
-        [0, -1],         [0, 1],    // Levá a pravá strana
-        [1, -1], [1, 0], [1, 1]     // Spodní řádek
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],         [0, 1],
+        [1, -1], [1, 0], [1, 1]
     ];
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            if (gameGrid[row][col] === 'M') continue; // Přeskočíme miny
+            if (gameGrid[row][col] === 'M') continue;
 
             let mineCount = 0;
-
-            // Projdeme všechny sousední buňky
             directions.forEach(([dx, dy]) => {
                 const newRow = row + dx;
                 const newCol = col + dy;
-
-                // Ověříme, zda sousední buňka existuje a je mina
                 if (
                     newRow >= 0 && newRow < rows &&
                     newCol >= 0 && newCol < cols &&
@@ -161,11 +119,43 @@ function calculateNumbers(rows, cols) {
                 }
             });
 
-            gameGrid[row][col] = mineCount; // Uložíme počet min
+            gameGrid[row][col] = mineCount;
         }
     }
 }
 
+// Funkce pro odhalení okolních prázdných buněk
+function revealEmptyCells(row, col) {
+    const directions = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],         [0, 1],
+        [1, -1], [1, 0], [1, 1]
+    ];
+
+    if (visited[row][col]) return;
+    visited[row][col] = true;
+
+    directions.forEach(([dx, dy]) => {
+        const newRow = row + dx;
+        const newCol = col + dy;
+
+        if (
+            newRow >= 0 && newRow < gameGrid.length &&
+            newCol >= 0 && newCol < gameGrid[0].length &&
+            !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
+        ) {
+            const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
+            adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
+            adjacentCell.style.backgroundColor = '#ddd';
+
+            if (gameGrid[newRow][newCol] === 0) {
+                revealEmptyCells(newRow, newCol);
+            }
+        }
+    });
+}
+
+// Kontrola vítězství
 function checkWin() {
     let allCellsCorrect = true;
 
@@ -174,18 +164,11 @@ function checkWin() {
             const cellElement = document.getElementById(`cell-${row}-${col}`);
             const cellValue = gameGrid[row][col];
 
-            // Debug: Log každého políčka pro kontrolu
-            console.log(`Kontrola buňky [${row}, ${col}]: Hodnota = ${cellValue}, Text = "${cellElement.textContent}", Pozadí = "${cellElement.style.backgroundColor}"`);
-
-            // Kontrola políček bez miny
-            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(221, 221, 221)') { // Pozadí odhalené buňky
-                console.log(`Buňka [${row}, ${col}] nebyla odhalena!`);
+            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(221, 221, 221)') {
                 allCellsCorrect = false;
             }
 
-            // Kontrola políček s minou
             if (cellValue === 'M' && cellElement.textContent !== '🚩') {
-                console.log(`Buňka [${row}, ${col}] nemá správně vlaječku!`);
                 allCellsCorrect = false;
             }
         }
@@ -196,6 +179,7 @@ function checkWin() {
     }
 }
 
+// Přidání pravého kliknutí (položení vlaječky)
 function addRightClickListener(cellElement, row, col) {
     cellElement.addEventListener('contextmenu', (event) => {
         event.preventDefault();
@@ -204,10 +188,47 @@ function addRightClickListener(cellElement, row, col) {
 
         if (cellElement.textContent === '🚩') {
             cellElement.textContent = '';
+            flagsPlaced--; // Snížíme počet vlajek
         } else {
-            cellElement.textContent = '🚩';
+            if (flagsPlaced < mineCount) {
+                cellElement.textContent = '🚩';
+                flagsPlaced++; // Zvýšíme počet vlajek
+            } else {
+                alert('Nemůžete položit více vlajek, než je počet min!');
+            }
         }
 
+        updateFlagCounter(); // Aktualizujeme počitadlo vlajek na obrazovce
         checkWin(); // Kontrola vítězství po každém označení vlaječky
     });
 }
+
+// Funkce pro aktualizaci počitadla vlajek na obrazovce
+function updateFlagCounter() {
+    const flagCounterElement = document.getElementById('flag-counter');
+    flagCounterElement.textContent = `Vlajky: ${flagsPlaced}/${mineCount}`;
+}
+
+// Spuštění hry při načtení stránky
+document.addEventListener('DOMContentLoaded', () => {
+    const rows = 10;
+    const cols = 10;
+    mineCount = 10;
+
+    flagsPlaced = 0; // Resetujeme počet vlajek
+    isFirstClick = true;
+
+    initializeVisited(rows, cols);
+    createGameGrid(rows, cols);
+
+    // Nastavíme počitadlo vlajek
+    const flagCounterElement = document.getElementById('flag-counter');
+    if (!flagCounterElement) {
+        const counterDiv = document.createElement('div');
+        counterDiv.id = 'flag-counter';
+        counterDiv.style.marginTop = '10px';
+        counterDiv.textContent = `Vlajky: 0/${mineCount}`;
+        document.body.appendChild(counterDiv);
+    }
+});
+
