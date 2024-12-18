@@ -15,7 +15,7 @@
             <!-- Privacy action button -->
             <a href="registration.php" class="action_btn">Sign up</a>
             <a href="login.php" class="action_btn">Log in</a>
-            <a href="logout.php">Logout</a>
+            <a href="logout.php" class="action_btn">Logout</a>
             <!-- Toggle button for responsive menu -->
             <div class="toggle_btn">
                 <i class="fa-solid fa-bars"></i>

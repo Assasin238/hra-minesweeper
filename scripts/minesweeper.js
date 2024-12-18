@@ -3,8 +3,9 @@ let gameGrid = []; // Stav mřížky (miny a čísla)
 let mineCount = 0; // Počet min
 let isFirstClick = true; // Indikátor, zda hráč provedl první kliknutí
 let visited = []; // Sledování navštívených buněk (pro odhalování okolí)
-// Sledování počtu vlajek
 let flagsPlaced = 0; // Počet položených vlajek
+let gameOver = false; // Kontrola stavu hry
+
 // Funkce pro vytvoření mřížky hry
 function createGameGrid(rows, cols) {
     const gameGridElement = document.getElementById('game-grid');
@@ -15,11 +16,11 @@ function createGameGrid(rows, cols) {
 
         for (let col = 0; col < cols; col++) {
             const cellElement = document.createElement('td');
-            cellElement.id = `cell-${row}-${col}`; // Nastavíme ID pro buňku
+            cellElement.id = `cell-${row}-${col}`;
 
-            // Přidáme event listenery pro kliknutí
+            // Přidáme event listenery
             cellElement.addEventListener('click', () => handleCellClick(row, col, cellElement));
-            addRightClickListener(cellElement, row, col); // Přidáme pravé kliknutí
+            addRightClickListener(cellElement, row, col);
 
             rowElement.appendChild(cellElement);
         }
@@ -27,7 +28,7 @@ function createGameGrid(rows, cols) {
         gameGridElement.appendChild(rowElement);
     }
 
-    initializeGameGrid(rows, cols); // Inicializace mřížky (prázdné hodnoty)
+    initializeGameGrid(rows, cols);
 }
 
 // Inicializace prázdné mřížky
@@ -42,16 +43,11 @@ function initializeVisited(rows, cols) {
 
 // Funkce pro zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
-    if (cellElement.textContent === '🚩') return; // Ignorujeme vlaječky
+    if (gameOver || cellElement.textContent === '🚩') return;
 
     if (isFirstClick) {
-        // Generuj miny s bezpečnou oblastí
         createMinesWithSafeArea(row, col, gameGrid.length, gameGrid[0].length, mineCount);
-
-        // Spočítej čísla
         calculateNumbers(gameGrid.length, gameGrid[0].length);
-
-        // První kliknutí bylo provedeno
         isFirstClick = false;
     }
 
@@ -59,7 +55,7 @@ function handleCellClick(row, col, cellElement) {
     if (cellValue === 'M') {
         cellElement.textContent = '💣';
         cellElement.style.backgroundColor = 'red';
-        alert('Game Over!');
+        endGame(false); // Konec hry - prohra
         return;
     }
 
@@ -70,22 +66,30 @@ function handleCellClick(row, col, cellElement) {
         revealEmptyCells(row, col);
     }
 
-    checkWin(); // Kontrola vítězství
+    checkWin();
+}
+
+// Funkce pro ukončení hry
+function endGame(win) {
+    gameOver = true;
+    if (!win) {
+        alert('Game Over! Klikněte na OK pro restart hry.');
+    } else {
+        alert('Gratulujeme! Vyhrál(a) jste hru! 🎉');
+    }
+    setTimeout(() => location.reload(), 100); // Restart hry
 }
 
 // Funkce pro generování min s bezpečnou oblastí
 function createMinesWithSafeArea(startRow, startCol, rows, cols, mineCount) {
-    initializeGameGrid(rows, cols); // Reset mřížky na začátku
+    initializeGameGrid(rows, cols);
     let minesPlaced = 0;
 
     while (minesPlaced < mineCount) {
         const row = Math.floor(Math.random() * rows);
         const col = Math.floor(Math.random() * cols);
 
-        // Vynecháme bezpečnou oblast kolem první buňky
-        if (Math.abs(row - startRow) <= 1 && Math.abs(col - startCol) <= 1) {
-            continue;
-        }
+        if (Math.abs(row - startRow) <= 1 && Math.abs(col - startCol) <= 1) continue;
 
         if (gameGrid[row][col] === 0) {
             gameGrid[row][col] = 'M';
@@ -175,7 +179,7 @@ function checkWin() {
     }
 
     if (allCellsCorrect) {
-        alert('Gratulujeme! Vyhrál(a) jste hru! 🎉');
+        endGame(true); // Konec hry - vítězství
     }
 }
 
@@ -184,44 +188,51 @@ function addRightClickListener(cellElement, row, col) {
     cellElement.addEventListener('contextmenu', (event) => {
         event.preventDefault();
 
-        if (cellElement.style.backgroundColor === '#ddd') return; // Ignorujeme odhalené buňky
+        // Pokud je hra ukončena, zakážeme další interakci
+        if (gameOver) return;
 
+        // Zakážeme pokládání vlajek na odhalených polích (čísla nebo prázdná pole)
+        if (cellElement.style.backgroundColor === '#ddd') return;
+
+        // Přepínání vlajky
         if (cellElement.textContent === '🚩') {
+            // Pokud je vlajka, odstraníme ji
             cellElement.textContent = '';
-            flagsPlaced--; // Snížíme počet vlajek
+            flagsPlaced--; 
         } else {
+            // Pokud není vlajka a počet vlajek je menší než počet min
             if (flagsPlaced < mineCount) {
                 cellElement.textContent = '🚩';
-                flagsPlaced++; // Zvýšíme počet vlajek
+                flagsPlaced++; 
             } else {
                 alert('Nemůžete položit více vlajek, než je počet min!');
             }
         }
 
-        updateFlagCounter(); // Aktualizujeme počitadlo vlajek na obrazovce
-        checkWin(); // Kontrola vítězství po každém označení vlaječky
+        updateFlagCounter();
+        checkWin();
     });
 }
 
-// Funkce pro aktualizaci počitadla vlajek na obrazovce
+// Funkce pro aktualizaci počitadla vlajek
 function updateFlagCounter() {
     const flagCounterElement = document.getElementById('flag-counter');
     flagCounterElement.textContent = `Vlajky: ${flagsPlaced}/${mineCount}`;
 }
 
-// Spuštění hry při načtení stránky
+// Spuštění hry
 document.addEventListener('DOMContentLoaded', () => {
     const rows = 10;
     const cols = 10;
     mineCount = 10;
 
-    flagsPlaced = 0; // Resetujeme počet vlajek
+    flagsPlaced = 0;
     isFirstClick = true;
+    gameOver = false;
 
     initializeVisited(rows, cols);
     createGameGrid(rows, cols);
 
-    // Nastavíme počitadlo vlajek
     const flagCounterElement = document.getElementById('flag-counter');
     if (!flagCounterElement) {
         const counterDiv = document.createElement('div');
@@ -231,4 +242,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(counterDiv);
     }
 });
-
