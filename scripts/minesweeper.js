@@ -20,7 +20,7 @@ function createGameGrid(rows, cols) {
 
             // Přidáme event listenery
             cellElement.addEventListener('click', () => handleCellClick(row, col, cellElement));
-            addRightClickListener(cellElement, row, col);
+            cellElement.addEventListener('contextmenu', (event) => handleRightClick(event, row, col, cellElement));
 
             rowElement.appendChild(cellElement);
         }
@@ -43,7 +43,7 @@ function initializeVisited(rows, cols) {
 
 // Funkce pro zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
-    if (gameOver || cellElement.textContent === '🚩') return;
+    if (gameOver || cellElement.classList.contains('flagged')) return;
 
     if (isFirstClick) {
         createMinesWithSafeArea(row, col, gameGrid.length, gameGrid[0].length, mineCount);
@@ -51,7 +51,11 @@ function handleCellClick(row, col, cellElement) {
         isFirstClick = false;
     }
 
+    if (visited[row][col]) return;
+
     const cellValue = gameGrid[row][col];
+    visited[row][col] = true;
+
     if (cellValue === 'M') {
         cellElement.textContent = '💣';
         cellElement.style.backgroundColor = 'red';
@@ -136,9 +140,6 @@ function revealEmptyCells(row, col) {
         [1, -1], [1, 0], [1, 1]
     ];
 
-    if (visited[row][col]) return;
-    visited[row][col] = true;
-
     directions.forEach(([dx, dy]) => {
         const newRow = row + dx;
         const newCol = col + dy;
@@ -149,6 +150,7 @@ function revealEmptyCells(row, col) {
             !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
         ) {
             const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
+            visited[newRow][newCol] = true;
             adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
             adjacentCell.style.backgroundColor = '#ddd';
 
@@ -161,57 +163,52 @@ function revealEmptyCells(row, col) {
 
 // Kontrola vítězství
 function checkWin() {
-    let allCellsCorrect = true;
+    let correctlyFlaggedMines = 0;
+    let allCellsRevealed = true;
 
     for (let row = 0; row < gameGrid.length; row++) {
         for (let col = 0; col < gameGrid[row].length; col++) {
             const cellElement = document.getElementById(`cell-${row}-${col}`);
             const cellValue = gameGrid[row][col];
 
-            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(221, 221, 221)') {
-                allCellsCorrect = false;
+            if (cellValue === 'M' && cellElement.textContent === '🚩') {
+                correctlyFlaggedMines++;
+            } else if (cellValue === 'M' && cellElement.textContent !== '🚩') {
+                allCellsRevealed = false;
             }
 
-            if (cellValue === 'M' && cellElement.textContent !== '🚩') {
-                allCellsCorrect = false;
+            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(255, 255, 255)') {
+                allCellsRevealed = false;
             }
         }
     }
 
-    if (allCellsCorrect) {
+    if (correctlyFlaggedMines === mineCount && allCellsRevealed) {
         endGame(true); // Konec hry - vítězství
     }
 }
 
-// Přidání pravého kliknutí (položení vlaječky)
-function addRightClickListener(cellElement, row, col) {
-    cellElement.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
+// Zpracování pravého kliknutí (položení vlaječky)
+function handleRightClick(event, row, col, cellElement) {
+    event.preventDefault();
 
-        // Pokud je hra ukončena, zakážeme další interakci
-        if (gameOver) return;
+    if (gameOver || visited[row][col]) return;
 
-        // Zakážeme pokládání vlajek na odhalených polích (čísla nebo prázdná pole)
-        if (cellElement.style.backgroundColor === '#ddd') return;
-
-        // Přepínání vlajky
-        if (cellElement.textContent === '🚩') {
-            // Pokud je vlajka, odstraníme ji
-            cellElement.textContent = '';
-            flagsPlaced--; 
+    if (cellElement.classList.contains('flagged')) {
+        cellElement.classList.remove('flagged');
+        cellElement.textContent = '';
+        flagsPlaced--;
+    } else {
+        if (flagsPlaced < mineCount) {
+            cellElement.classList.add('flagged');
+            cellElement.textContent = '🚩';
+            flagsPlaced++;
         } else {
-            // Pokud není vlajka a počet vlajek je menší než počet min
-            if (flagsPlaced < mineCount) {
-                cellElement.textContent = '🚩';
-                flagsPlaced++; 
-            } else {
-                alert('Nemůžete položit více vlajek, než je počet min!');
-            }
+            alert('Nemůžete položit více vlajek, než je počet min!');
         }
+    }
 
-        updateFlagCounter();
-        checkWin();
-    });
+    updateFlagCounter();
 }
 
 // Funkce pro aktualizaci počitadla vlajek
