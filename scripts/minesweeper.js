@@ -5,6 +5,8 @@ let isFirstClick = true; // Indikátor, zda hráč provedl první kliknutí
 let visited = []; // Sledování navštívených buněk (pro odhalování okolí)
 let flagsPlaced = 0; // Počet položených vlajek
 let gameOver = false; // Kontrola stavu hry
+let timer; // Časovač
+let startTime; // Počáteční čas
 
 // Funkce pro vytvoření mřížky hry
 function createGameGrid(rows, cols) {
@@ -20,7 +22,7 @@ function createGameGrid(rows, cols) {
 
             // Přidáme event listenery
             cellElement.addEventListener('click', () => handleCellClick(row, col, cellElement));
-            cellElement.addEventListener('contextmenu', (event) => handleRightClick(event, row, col, cellElement));
+            addRightClickListener(cellElement, row, col);
 
             rowElement.appendChild(cellElement);
         }
@@ -43,19 +45,16 @@ function initializeVisited(rows, cols) {
 
 // Funkce pro zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
-    if (gameOver || cellElement.classList.contains('flagged')) return;
+    if (gameOver || cellElement.textContent === '🚩') return;
 
     if (isFirstClick) {
+        startTimer();
         createMinesWithSafeArea(row, col, gameGrid.length, gameGrid[0].length, mineCount);
         calculateNumbers(gameGrid.length, gameGrid[0].length);
         isFirstClick = false;
     }
 
-    if (visited[row][col]) return;
-
     const cellValue = gameGrid[row][col];
-    visited[row][col] = true;
-
     if (cellValue === 'M') {
         cellElement.textContent = '💣';
         cellElement.style.backgroundColor = 'red';
@@ -76,6 +75,7 @@ function handleCellClick(row, col, cellElement) {
 // Funkce pro ukončení hry
 function endGame(win) {
     gameOver = true;
+    stopTimer();
     if (!win) {
         alert('Game Over! Klikněte na OK pro restart hry.');
     } else {
@@ -140,6 +140,9 @@ function revealEmptyCells(row, col) {
         [1, -1], [1, 0], [1, 1]
     ];
 
+    if (visited[row][col]) return;
+    visited[row][col] = true;
+
     directions.forEach(([dx, dy]) => {
         const newRow = row + dx;
         const newCol = col + dy;
@@ -150,7 +153,6 @@ function revealEmptyCells(row, col) {
             !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
         ) {
             const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
-            visited[newRow][newCol] = true;
             adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
             adjacentCell.style.backgroundColor = '#ddd';
 
@@ -163,52 +165,57 @@ function revealEmptyCells(row, col) {
 
 // Kontrola vítězství
 function checkWin() {
-    let correctlyFlaggedMines = 0;
-    let allCellsRevealed = true;
+    let allCellsCorrect = true;
 
     for (let row = 0; row < gameGrid.length; row++) {
         for (let col = 0; col < gameGrid[row].length; col++) {
             const cellElement = document.getElementById(`cell-${row}-${col}`);
             const cellValue = gameGrid[row][col];
 
-            if (cellValue === 'M' && cellElement.textContent === '🚩') {
-                correctlyFlaggedMines++;
-            } else if (cellValue === 'M' && cellElement.textContent !== '🚩') {
-                allCellsRevealed = false;
+            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(221, 221, 221)') {
+                allCellsCorrect = false;
             }
 
-            if (cellValue !== 'M' && cellElement.style.backgroundColor !== 'rgb(255, 255, 255)') {
-                allCellsRevealed = false;
+            if (cellValue === 'M' && cellElement.textContent !== '🚩') {
+                allCellsCorrect = false;
             }
         }
     }
 
-    if (correctlyFlaggedMines === mineCount && allCellsRevealed) {
+    if (allCellsCorrect) {
         endGame(true); // Konec hry - vítězství
     }
 }
 
-// Zpracování pravého kliknutí (položení vlaječky)
-function handleRightClick(event, row, col, cellElement) {
-    event.preventDefault();
+// Přidání pravého kliknutí (položení vlaječky)
+function addRightClickListener(cellElement, row, col) {
+    cellElement.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
 
-    if (gameOver || visited[row][col]) return;
+        // Pokud je hra ukončena, zakážeme další interakci
+        if (gameOver) return;
 
-    if (cellElement.classList.contains('flagged')) {
-        cellElement.classList.remove('flagged');
-        cellElement.textContent = '';
-        flagsPlaced--;
-    } else {
-        if (flagsPlaced < mineCount) {
-            cellElement.classList.add('flagged');
-            cellElement.textContent = '🚩';
-            flagsPlaced++;
+        // Zakážeme pokládání vlajek na odhalených polích (čísla nebo prázdná pole)
+        if (cellElement.style.backgroundColor === '#ddd') return;
+
+        // Přepínání vlajky
+        if (cellElement.textContent === '🚩') {
+            // Pokud je vlajka, odstraníme ji
+            cellElement.textContent = '';
+            flagsPlaced--; 
         } else {
-            alert('Nemůžete položit více vlajek, než je počet min!');
+            // Pokud není vlajka a počet vlajek je menší než počet min
+            if (flagsPlaced < mineCount) {
+                cellElement.textContent = '🚩';
+                flagsPlaced++; 
+            } else {
+                alert('Nemůžete položit více vlajek, než je počet min!');
+            }
         }
-    }
 
-    updateFlagCounter();
+        updateFlagCounter();
+        checkWin();
+    });
 }
 
 // Funkce pro aktualizaci počitadla vlajek
@@ -217,25 +224,100 @@ function updateFlagCounter() {
     flagCounterElement.textContent = `Vlajky: ${flagsPlaced}/${mineCount}`;
 }
 
-// Spuštění hry
-document.addEventListener('DOMContentLoaded', () => {
-    const rows = 10;
-    const cols = 10;
-    mineCount = 10;
+// Funkce pro výběr obtížnosti
+function setDifficulty(difficulty) {
+    let rows, cols;
+    switch (difficulty) {
+        case 'easy':
+            rows = 8;
+            cols = 8;
+            mineCount = 10;
+            break;
+        case 'medium':
+            rows = 16;
+            cols = 16;
+            mineCount = 40;
+            break;
+        case 'hard':
+            rows = 16;
+            cols = 30;
+            mineCount = 99;
+            break;
+        default:
+            rows = 10;
+            cols = 10;
+            mineCount = 10;
+    }
 
     flagsPlaced = 0;
     isFirstClick = true;
     gameOver = false;
+    stopTimer();
 
     initializeVisited(rows, cols);
     createGameGrid(rows, cols);
 
     const flagCounterElement = document.getElementById('flag-counter');
-    if (!flagCounterElement) {
-        const counterDiv = document.createElement('div');
-        counterDiv.id = 'flag-counter';
-        counterDiv.style.marginTop = '10px';
-        counterDiv.textContent = `Vlajky: 0/${mineCount}`;
-        document.body.appendChild(counterDiv);
+    flagCounterElement.textContent = `Vlajky: 0/${mineCount}`;
+
+    const timerElement = document.getElementById('timer');
+    timerElement.textContent = 'Čas: 0s';
+}
+
+// Spuštění časovače
+function startTimer() {
+    startTime = Date.now();
+    timer = setInterval(() => {
+        const currentTime = Date.now();
+        const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+        const timerElement = document.getElementById('timer');
+        timerElement.textContent = `Čas: ${elapsedSeconds}s`;
+    }, 1000);
+}
+
+// Zastavení časovače
+function stopTimer() {
+    clearInterval(timer);
+}
+
+// Spuštění hry
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('game-container');
+
+    if (!container) {
+        console.error('Element s ID "game-container" nebyl nalezen.');
+        return;
     }
+
+    // Přidání výběru obtížnosti
+    const difficultySelector = document.createElement('select');
+    difficultySelector.id = 'difficulty-selector';
+
+    const difficulties = [
+        { value: 'easy', label: 'Lehká' },
+        { value: 'medium', label: 'Střední' },
+        { value: 'hard', label: 'Těžká' }
+    ];
+
+    difficulties.forEach(diff => {
+        const option = document.createElement('option');
+        option.value = diff.value;
+        option.textContent = diff.label;
+        difficultySelector.appendChild(option);
+    });
+
+    difficultySelector.addEventListener('change', (event) => {
+        setDifficulty(event.target.value);
+    });
+
+    container.insertBefore(difficultySelector, container.firstChild);
+
+    // Přidání časovače
+    const timerElement = document.createElement('div');
+    timerElement.id = 'timer';
+    timerElement.textContent = 'Čas: 0s';
+    container.insertBefore(timerElement, container.firstChild);
+
+    // Inicializace hry
+    setDifficulty('easy'); // Defaultní obtížnost
 });

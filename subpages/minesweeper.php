@@ -24,7 +24,8 @@
 
     </header>
 <div id="game-container">
-        <table id="game-grid"></table>
+    <div id="flag-counter">Vlajky: 0/0</div> <!-- Počítadlo vlajek -->
+    <table id="game-grid"></table>
 </div>
 <?php include "../php/footer.php" ?>
 </body>
