@@ -71,6 +71,7 @@ if (isset($_SESSION["user"])) {
             ?>
 
             <!-- Formulář -->
+            <h2 class="form-title">Registration</h2>
             <form action="registration.php" method="post" class="mt-4">
                 <div class="mb-3">
                     <label for="nickname" class="form-label">NickName:</label>

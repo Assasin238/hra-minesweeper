@@ -19,7 +19,7 @@ body {
 
 /* Rodičovský kontejner pro .container a .error-container */
 .parent-container {
-    position: relative; /* Tímto zajišťujeme, že .error-container bude umístěn relativně k tomuto rodiči */
+    position: relative; /* .error-container bude umístěn relativně k parent-container */
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -61,6 +61,13 @@ body {
     background-color: #444;
     outline: none;
     box-shadow: 0 0 10px rgba(128, 141, 128, 0.8);
+}
+
+.form-title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #ecf0f1;
+    text-align: center;
 }
 
 /* Tlačítko */

@@ -25,9 +25,6 @@ if(!isset($_SESSION["user"])){
             <a href="subpages/login.php" class="action_btn">Log in</a>
             <a href="subpages/logout.php" class="action_btn">Logout</a>
             <!-- Toggle button for responsive menu -->
-            <div class="toggle_btn">
-                <i class="fa-solid fa-bars"></i>
-            </div>
         </div>
 
     </header>
