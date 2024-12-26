@@ -15,8 +15,7 @@ if (isset($_SESSION["user"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     <title>Minesweeper Game - Registration</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
     <div class="container mt-5">
@@ -62,6 +61,11 @@ if (isset($_SESSION["user"])) {
 
                     if (mysqli_stmt_execute($stmt)) {
                         echo "<div class='alert alert-success'>Registrace byla úspěšná!</div>";
+                        echo "<script>
+                        setTimeout(function() {
+                            window.location.href = 'login.php';
+                        },1500); // 1,5 sekundy delay
+                        </script>";
                     } else {
                         echo "<div class='alert alert-danger'>Něco se pokazilo při vkládání dat.</div>";
                     }
