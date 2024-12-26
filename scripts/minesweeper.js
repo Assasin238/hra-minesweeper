@@ -22,7 +22,7 @@ function createGameGrid(rows, cols) {
 
             // Přidáme event listenery
             cellElement.addEventListener('click', () => handleCellClick(row, col, cellElement));
-            addRightClickListener(cellElement, row, col);
+            cellElement.addEventListener('contextmenu', (event) => handleRightClick(event, row, col, cellElement));
 
             rowElement.appendChild(cellElement);
         }
@@ -187,34 +187,45 @@ function checkWin() {
     }
 }
 
-// Přidání pravého kliknutí (položení vlaječky)
-function addRightClickListener(cellElement, row, col) {
-    cellElement.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
+// Přidání posluchače pro pravé kliknutí na každou buňku
+function handleRightClick(event, row, col, cellElement) {
+    event.preventDefault();
 
-        // Pokud je hra ukončena, zakážeme další interakci
-        if (gameOver) return;
+    if (gameOver || visited[row][col]) return; // Pokud je buňka již navštívená, nemůžeme ji označit vlajkou
 
-        // Zakážeme pokládání vlajek na odhalených polích (čísla nebo prázdná pole)
-        if (cellElement.style.backgroundColor === '#ddd') return;
+    // Pokud buňka již obsahuje číslo nebo je prázdná (odhalena), nemůžeme položit vlajku
+    const cellValue = gameGrid[row][col];
+    if (cellValue !== 0 && cellValue !== 'M') {
+        return; // Buňka je odhalena s číslem, vlajku nelze položit
+    }
 
-        // Přepínání vlajky
-        if (cellElement.textContent === '🚩') {
-            // Pokud je vlajka, odstraníme ji
-            cellElement.textContent = '';
-            flagsPlaced--; 
+    if (cellElement.classList.contains('flagged')) {
+        cellElement.classList.remove('flagged');
+        cellElement.textContent = '';
+        flagsPlaced--;
+    } else {
+        if (flagsPlaced < mineCount) {
+            cellElement.classList.add('flagged');
+            cellElement.textContent = '🚩';
+            flagsPlaced++;
+            playSound('place-flag');
         } else {
-            // Pokud není vlajka a počet vlajek je menší než počet min
-            if (flagsPlaced < mineCount) {
-                cellElement.textContent = '🚩';
-                flagsPlaced++; 
-            } else {
-                alert('Nemůžete položit více vlajek, než je počet min!');
-            }
+            alert('Nemůžete položit více vlajek, než je počet min!');
         }
+    }
 
-        updateFlagCounter();
-        checkWin();
+    updateFlagCounter();
+}
+
+// sound u vlajky
+function playSound(action) {
+    const sounds = {
+        'place-flag': '../assets/place-flag.mp3' // Opravená cesta
+    };
+
+    const audio = new Audio(sounds[action]);
+    audio.play().catch((error) => {
+        console.error("Chyba při přehrávání zvuku:", error);
     });
 }
 
