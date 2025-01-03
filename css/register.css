@@ -98,7 +98,7 @@ body {
 
 /* Kontejner pro chybové zprávy */
 .error-container {
-    position: absolute; /* Absolutní pozicování */
+    position: absolute;
     top: 100%; /* Umístí chyby pod .container */
     left: 0;
     width: 100%;
@@ -141,7 +141,7 @@ footer{
     align-self: center;
 }
 
-/* Přidání responzivního designu */
+/* Přidání responzivního designu, jen lehce */
 @media (max-width: 768px) {
     .container {
         padding: 30px 20px;

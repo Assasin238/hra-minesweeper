@@ -115,7 +115,7 @@ body {
     transform: translateY(2px);
 }
 
-/* Chybové zprávy */
+/* Chyba */
 .error-msg {
     background-color: rgba(220, 53, 69, 0.1);
     color: #dc3545;
@@ -144,7 +144,7 @@ body {
     }
 }
 
-/* Nový design pro signup button pod formulářem */
+/*signup button pod formulářem */
 .signup-btn-container {
     text-align: center;
     margin-top: 20px;
