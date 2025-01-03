@@ -1,1 +1,10 @@
 /*Názvy a soubory se můžou lišit při releasu*/
+
+soundeffects to mines
+user icon - aby zmizel login/register když už jsi s účtem
+lepší design k minám
+fixnout vlajky zase - ted fungujou tak že jdou položit na pole kde je mina pouze či na pole která většinou ti odkryjou víc políček najednou
+možná přidat možnost odebrat své skóre
+upload k vyšinka db
+
+
