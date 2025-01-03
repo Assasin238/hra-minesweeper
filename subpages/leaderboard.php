@@ -15,7 +15,15 @@ $sql = "SELECT users.nick_name, leaderboard.difficulty, leaderboard.time
         ORDER BY leaderboard.difficulty, leaderboard.time ASC 
         LIMIT 10";
 $result = mysqli_query($conn, $sql);
+if (!$result) {
+    die("Query failed: " . mysqli_error($conn)); // Pokud dotaz selže
+}
 
+echo "<pre>";
+while ($row = mysqli_fetch_assoc($result)) {
+    print_r($row); // Vypíše načtené řádky
+}
+echo "</pre>";
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +37,7 @@ $result = mysqli_query($conn, $sql);
 <body>
     <header>
         <div class="navbar">
-            <div class="logo"><a href="index.php">Minesweeper Game</a></div>
+            <div class="logo"><a href="../index.php">Minesweeper Game</a></div>
         </div>
     </header>
 

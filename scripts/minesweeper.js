@@ -332,3 +332,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializace hry
     setDifficulty('easy'); // Defaultní obtížnost
 });
+
+function sendScoreToServer(difficulty, time) {
+    console.log("Sending score to server...");
+    console.log("Difficulty:", difficulty);
+    console.log("Time:", time);
+
+    fetch("../subpages/minesweeper.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            action: "save_score",
+            difficulty: difficulty,
+            time: time
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Server response:", data); // Přidej tento řádek
+        if (data.success) {
+            alert("Score successfully saved!");
+        } else {
+            alert("Failed to save score: " + (data.error || "Unknown error"));
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error); // Přidej tento řádek
+    });
+}
+
+
+// Zavolej tuto funkci po výhře hráče:
+function onGameWin(difficulty, elapsedTime) {
+    sendScoreToServer(difficulty, elapsedTime);
+    alert("You won! Your time: " + elapsedTime + " seconds.");
+}
+

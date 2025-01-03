@@ -16,11 +16,6 @@ if (isset($_SESSION["user"])) {
     <title>Minesweeper Game - Login</title>
     <link rel="stylesheet" href="../css/login.css">
 </head>
-<header>
-    <div class="navbar">
-        <div class="logo"><a href="#">Minesweeper Game</a></div>
-    </div>
-</header>
 
 <div class="form-container">
     <h2 class="form-title">Login</h2>
