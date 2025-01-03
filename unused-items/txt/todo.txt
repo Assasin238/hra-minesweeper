@@ -8,3 +8,11 @@ možná přidat možnost odebrat své skóre
 upload k vyšinka db
 
 
+leaderboard co zadat když ve škole:
+CREATE TABLE leaderboard (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
+    time INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
