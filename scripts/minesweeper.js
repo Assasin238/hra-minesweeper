@@ -76,13 +76,21 @@ function handleCellClick(row, col, cellElement) {
 function endGame(win) {
     gameOver = true;
     stopTimer();
+    
+    const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Čas hry
+
     if (!win) {
         alert('Game Over! Klikněte na OK pro restart hry.');
     } else {
         alert('Gratulujeme! Vyhrál(a) jste hru! 🎉');
+        // Odeslání skóre před restartem
+        onGameWin(getDifficulty(), elapsedTime);
     }
-    setTimeout(() => location.reload(), 100); // Restart hry
+
+    // Restart hry po chvíli, aby se stihlo odeslat skóre
+    setTimeout(() => location.reload(), 10000); // Restart hry
 }
+
 
 // Funkce pro generování min s bezpečnou oblastí
 function createMinesWithSafeArea(startRow, startCol, rows, cols, mineCount) {
@@ -334,10 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function sendScoreToServer(difficulty, time) {
-    console.log("Sending score to server...");
-    console.log("Difficulty:", difficulty);
-    console.log("Time:", time);
-
+    console.log("Preparing to send score to server...");
     fetch("../subpages/minesweeper.php", {
         method: "POST",
         headers: {
@@ -349,24 +354,41 @@ function sendScoreToServer(difficulty, time) {
             time: time
         }),
     })
-    .then(response => response.json())
+    .then(response => response.text())  // Změníme na text, abychom viděli, co server vrací
     .then(data => {
-        console.log("Server response:", data); // Přidej tento řádek
-        if (data.success) {
-            alert("Score successfully saved!");
-        } else {
-            alert("Failed to save score: " + (data.error || "Unknown error"));
+        console.log("Server response:", data);  // Vypíše odpověď serveru
+    
+        try {
+            const jsonData = JSON.parse(data);  // Pokusí se to převést na JSON
+            if (jsonData.success) {
+                alert("Score successfully saved!");
+            } else {
+                alert("Failed to save score: " + (jsonData.error || "Unknown error"));
+            }
+        } catch (e) {
+            console.error("Error parsing JSON:", e);
+            alert("Server returned invalid response.");
         }
     })
     .catch(error => {
-        console.error("Error:", error); // Přidej tento řádek
+        console.error("Error:", error);
     });
 }
 
 
+
+
+
+
 // Zavolej tuto funkci po výhře hráče:
 function onGameWin(difficulty, elapsedTime) {
+    console.log("onGameWin called with difficulty:", difficulty, "and time:", elapsedTime);
     sendScoreToServer(difficulty, elapsedTime);
     alert("You won! Your time: " + elapsedTime + " seconds.");
+}
+
+function getDifficulty() {
+    const difficultySelector = document.getElementById('difficulty-selector');
+    return difficultySelector ? difficultySelector.value : 'easy'; // Pokud není vybraná obtížnost, vrátí 'easy'
 }
 

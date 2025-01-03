@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (isset($_SESSION["user"])) {
@@ -6,7 +5,7 @@ if (isset($_SESSION["user"])) {
     exit();
 }
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,8 +29,10 @@ if (isset($_SESSION["user"])) {
             $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
             if ($user){
                 if (password_verify($password, $user["password"])){
-                    session_start();
+                    // Uložení uživatelských údajů do session
                     $_SESSION["user"] = "yes";
+                    $_SESSION["user_id"] = $user["id"];  // Uložení ID uživatele do session
+                    $_SESSION["nick_name"] = $user["nick_name"];  // Uložení přezdívky uživatele
                     header("Location: ../index.php");
                     die();
                 } else {

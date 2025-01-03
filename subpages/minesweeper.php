@@ -3,7 +3,7 @@ session_start();
 require_once "database.php";
 
 // Ověření, zda je uživatel přihlášen
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user_id"])) {
     http_response_code(403); // Zakázáno
     echo json_encode(["error" => "User not logged in"]);
     exit();
@@ -13,7 +13,7 @@ if (!isset($_SESSION["user"])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = json_decode(file_get_contents("php://input"), true);
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($data["action"]) && $data["action"] === "save_score") {
+    if (isset($data["action"]) && $data["action"] === "save_score") {
         $userId = $_SESSION["user_id"];
         $difficulty = $data["difficulty"];
         $time = $data["time"];
@@ -27,8 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
         // Logování pro ladění
         error_log("Saving score: user_id={$userId}, difficulty={$difficulty}, time={$time}");
-        error_log("Request received");
-        error_log("POST data: " . file_get_contents("php://input"));
         
         // Uložení do databáze
         $sql = "INSERT INTO leaderboard (user_id, difficulty, time) VALUES (?, ?, ?)";
@@ -44,8 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 }
-
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
