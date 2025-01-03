@@ -92,20 +92,20 @@ if (isset($_SESSION["user"])) {
             <h2 class="form-title">Registration</h2>
             <form action="registration.php" method="post" class="mt-4">
                 <div class="mb-3">
-                    <label for="nickname" class="form-label">NickName:</label>
-                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Zadejte svůj přezdívku">
+                    <!-- <label for="nickname" class="form-label">NickName:</label> -->
+                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Zadejte Vaši přezdívku">
                 </div>
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Zadejte svůj email">
+                    <!-- <label for="email" class="form-label">Email:</label> -->
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Zadejte Váš email">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Heslo:</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Zadejte heslo">
+                    <!-- <label for="password" class="form-label">Heslo:</label> -->
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Zadejte Vaše heslo">
                 </div>
                 <div class="mb-3">
-                    <label for="repeat_password" class="form-label">Zopakujte heslo:</label>
-                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Zadejte heslo znovu">
+                    <!-- <label for="repeat_password" class="form-label">Zopakujte heslo:</label> -->
+                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Zadejte Vaše heslo znovu">
                 </div>
                 <button type="submit" class="btn btn-primary">Registrovat</button>
             </form>

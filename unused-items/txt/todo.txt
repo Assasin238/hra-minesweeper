@@ -6,7 +6,7 @@ lepší design k minám - 2. priorita
 fixnout vlajky zase - ted fungujou tak že jdou položit na pole kde je mina pouze či na pole která většinou ti odkryjou víc políček najednou - 3. priorita
 možná přidat možnost odebrat své skóre
 upload k vyšinka db - second
-
+asi nastavit i jazyk cz/en protože ty jazyky tady mixuju jak opica xdddd 
 
 leaderboard co zadat když ve škole:
 CREATE TABLE leaderboard (
