@@ -42,31 +42,49 @@ if (isset($_SESSION["user"])) {
                     $errors[] = "Hesla se neshodují.";
                 }
 
-                // Pokud nejsou chyby, zpracujeme data
-                if (empty($errors)) {
-                    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-                    require_once "database.php";
+            if (empty($errors)) {
+                require_once "database.php";
 
-                    $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
-                    $stmt = mysqli_stmt_init($conn);
+                // prvně verify zda email je už v db
+                $checkEmailSql = "SELECT email FROM users WHERE email = ?";
+                $checkStmt = mysqli_stmt_init($conn);
 
-                    if (mysqli_stmt_prepare($stmt, $sql)) {
-                        mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
+                if (mysqli_stmt_prepare($checkStmt, $checkEmailSql)) {
+                    mysqli_stmt_bind_param($checkStmt, "s", $email);
+                    mysqli_stmt_execute($checkStmt);
+                    mysqli_stmt_store_result($checkStmt);
 
-                        if (mysqli_stmt_execute($stmt)) {
-                            echo "<div class='alert alert-success'>Registrace byla úspěšná, Přesměrováváme Vás na Login!</div>";
-                            echo "<script>
-                            setTimeout(function() {
-                                window.location.href = 'login.php';
-                            },2000); // 2 sekundy delay
-                            </script>";
-                        } else {
-                            $errors[] = "Něco se pokazilo při vkládání dat.";
-                        }
+                    if (mysqli_stmt_num_rows($checkStmt) > 0) {
+                        $errors[] = "Tento email je již registrován.";
                     } else {
-                        $errors[] = "Chyba v SQL dotazu: " . htmlspecialchars(mysqli_error($conn));
+                        // po emailu přejde na druhou část
+                        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+                        $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
+                        $stmt = mysqli_stmt_init($conn);
+
+                        if (mysqli_stmt_prepare($stmt, $sql)) {
+                            mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
+
+                            if (mysqli_stmt_execute($stmt)) {
+                                echo "<div class='alert alert-success'>Registrace byla úspěšná, Přesměrováváme Vás na Login!</div>";
+                                echo "<script>
+                                setTimeout(function() {
+                                    window.location.href = 'login.php';
+                                },2000); // 2 sekundy delay
+                                </script>";
+                            } else {
+                                $errors[] = "Něco se pokazilo při vkládání dat.";
+                            }
+                        } else {
+                            $errors[] = "Chyba v SQL dotazu: " . htmlspecialchars(mysqli_error($conn));
+                        }
                     }
+                } else {
+                    $errors[] = "Chyba při kontrole emailu: " . htmlspecialchars(mysqli_error($conn));
                 }
+            }
+
             }
             ?>
 
