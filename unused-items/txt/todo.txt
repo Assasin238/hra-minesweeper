@@ -16,3 +16,10 @@ CREATE TABLE leaderboard (
     time INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+
+
+
+
+jakmile tento projekt bude done tak implementovat prvky do své stránky a probably i upcoming website O_o - reg/log; db; leaderboard; mines; atd..... the more you know, you never know xddd
