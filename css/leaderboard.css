@@ -125,14 +125,11 @@ tbody td:first-child {
 }
 
 /* Footer */
-footer {
-    background: rgba(45, 45, 45, 0.9);
-    color: white;
+footer{
+    background: transparent;
+    color: black;
     text-align: center;
     bottom: 0;
     width: 100%;
     position: fixed;
-    padding: 0.5rem 0;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-    font-size: 0.9rem;
 }
