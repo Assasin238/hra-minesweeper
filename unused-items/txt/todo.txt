@@ -19,7 +19,10 @@ CREATE TABLE leaderboard (
 
 
 
-
+hrací pole, předělat na tyto velikosti:
+easy: 450px w 360px h
+medium: 540px w 420px h
+large: 600px w 500px h
 
 
 jakmile tento projekt bude done tak implementovat prvky do své stránky a probably i upcoming website O_o - reg/log; db; leaderboard; mines; atd..... the more you know, you never know xddd
