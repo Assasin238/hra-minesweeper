@@ -88,7 +88,7 @@ function endGame(win) {
     }
 
     // Restart hry po chvíli, aby se stihlo odeslat skóre
-    setTimeout(() => location.reload(), 10000); // Restart hry
+    setTimeout(() => location.reload(), 2000); // Restart hry
 }
 
 
