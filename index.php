@@ -21,8 +21,6 @@ if(!isset($_SESSION["user"])){
         <div class="navbar">
             <div class="logo"><a href="#" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
             <!-- Privacy action button -->
-            <a href="subpages/registration.php" class="action_btn">Sign up</a>
-            <a href="subpages/login.php" class="action_btn">Log in</a>
             <a href="subpages/logout.php" class="action_btn">Logout</a>
             <!-- Toggle button for responsive menu -->
         </div>

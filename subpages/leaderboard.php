@@ -18,12 +18,6 @@ $result = mysqli_query($conn, $sql);
 if (!$result) {
     die("Query failed: " . mysqli_error($conn)); // Pokud dotaz selže
 }
-
-echo "<pre>";
-while ($row = mysqli_fetch_assoc($result)) {
-    print_r($row); // Vypíše načtené řádky
-}
-echo "</pre>";
 ?>
 
 <!DOCTYPE html>
@@ -67,10 +61,9 @@ echo "</pre>";
                 <?php endif; ?>
             </tbody>
         </table>
+        <a href="minesweeper.php" class="action_btn">Back to Game</a>
     </main>
-
-    <footer>
-        <?php include "../php/footer.php"; ?>
-    </footer>
+    <?php include "../php/footer.php" ?>
 </body>
 </html>
+

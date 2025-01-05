@@ -61,8 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="navbar">
             <div class="logo"><a href="../index.php" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
             <!-- Privacy action button -->
-            <a href="registration.php" class="action_btn">Sign up</a>
-            <a href="login.php" class="action_btn">Log in</a>
             <a href="logout.php" class="action_btn">Logout</a>
             <a href="leaderboard.php" class="action_btn">leaderboard</a>
             <!-- Toggle button for responsive menu -->
