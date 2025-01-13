@@ -16,18 +16,17 @@ if (isset($_SESSION["user"])) {
     <link rel="stylesheet" href="../css/register.css">
 </head>
 <body>
-    <div class="parent-container"> <!-- Přidání rodičovského kontejneru -->
+    <div class="parent-container">
         <div class="container mt-5">
             <?php
-            $errors = []; // Inicializace chybového pole
+            $errors = [];
 
             if ($_SERVER["REQUEST_METHOD"] === "POST") {
-                // Získání dat z formuláře
                 $nickName = trim($_POST["nickname"]);
                 $email = trim($_POST["email"]);
                 $password = $_POST["password"];
                 $passwordRepeat = $_POST["repeat_password"];
-                
+
                 // Validace dat
                 if (empty($nickName) || empty($email) || empty($password) || empty($passwordRepeat)) {
                     $errors[] = "Všechny pole jsou povinné.";
@@ -42,83 +41,90 @@ if (isset($_SESSION["user"])) {
                     $errors[] = "Hesla se neshodují.";
                 }
 
-            if (empty($errors)) {
-                require_once "database.php";
+                if (empty($errors)) {
+                    require_once "database.php";
 
-                // prvně verify zda email je už v db
-                $checkEmailSql = "SELECT email FROM users WHERE email = ?";
-                $checkStmt = mysqli_stmt_init($conn);
+                    // Kontrola, zda přezdívka již existuje
+                    $checkNickSql = "SELECT nick_name FROM users WHERE nick_name = ?";
+                    $checkStmt = mysqli_stmt_init($conn);
 
-                if (mysqli_stmt_prepare($checkStmt, $checkEmailSql)) {
-                    mysqli_stmt_bind_param($checkStmt, "s", $email);
-                    mysqli_stmt_execute($checkStmt);
-                    mysqli_stmt_store_result($checkStmt);
+                    if (mysqli_stmt_prepare($checkStmt, $checkNickSql)) {
+                        mysqli_stmt_bind_param($checkStmt, "s", $nickName);
+                        mysqli_stmt_execute($checkStmt);
+                        mysqli_stmt_store_result($checkStmt);
 
-                    if (mysqli_stmt_num_rows($checkStmt) > 0) {
-                        $errors[] = "Tento email je již registrován.";
-                    } else {
-                        // po emailu přejde na druhou část
-                        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-                        $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
-                        $stmt = mysqli_stmt_init($conn);
-
-                        if (mysqli_stmt_prepare($stmt, $sql)) {
-                            mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
-
-                            if (mysqli_stmt_execute($stmt)) {
-                                echo "<div class='alert alert-success'>Registrace byla úspěšná, Přesměrováváme Vás na Login!</div>";
-                                echo "<script>
-                                setTimeout(function() {
-                                    window.location.href = 'login.php';
-                                },2000); // 2 sekundy delay
-                                </script>";
-                            } else {
-                                $errors[] = "Něco se pokazilo při vkládání dat.";
-                            }
+                        if (mysqli_stmt_num_rows($checkStmt) > 0) {
+                            $errors[] = "Tato přezdívka je již používána.";
                         } else {
-                            $errors[] = "Chyba v SQL dotazu: " . htmlspecialchars(mysqli_error($conn));
-                        }
-                    }
-                } else {
-                    $errors[] = "Chyba při kontrole emailu: " . htmlspecialchars(mysqli_error($conn));
-                }
-            }
+                            // Kontrola, zda email již existuje
+                            $checkEmailSql = "SELECT email FROM users WHERE email = ?";
+                            if (mysqli_stmt_prepare($checkStmt, $checkEmailSql)) {
+                                mysqli_stmt_bind_param($checkStmt, "s", $email);
+                                mysqli_stmt_execute($checkStmt);
+                                mysqli_stmt_store_result($checkStmt);
 
+                                if (mysqli_stmt_num_rows($checkStmt) > 0) {
+                                    $errors[] = "Tento email je již registrován.";
+                                } else {
+                                    // Vložení nového uživatele
+                                    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                                    $sql = "INSERT INTO users (nick_name, email, password) VALUES (?, ?, ?)";
+                                    $stmt = mysqli_stmt_init($conn);
+
+                                    if (mysqli_stmt_prepare($stmt, $sql)) {
+                                        mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
+
+                                        if (mysqli_stmt_execute($stmt)) {
+                                            echo "<div class='alert alert-success'>Registrace byla úspěšná, Přesměrováváme Vás na Login!</div>";
+                                            echo "<script>
+                                                setTimeout(function() {
+                                                    window.location.href = 'login.php';
+                                                }, 2000);
+                                            </script>";
+                                        } else {
+                                            $errors[] = "Něco se pokazilo při vkládání dat.";
+                                        }
+                                    } else {
+                                        $errors[] = "Chyba v SQL dotazu: " . htmlspecialchars(mysqli_error($conn));
+                                    }
+                                }
+                            } else {
+                                $errors[] = "Chyba při kontrole emailu: " . htmlspecialchars(mysqli_error($conn));
+                            }
+                        }
+                    } else {
+                        $errors[] = "Chyba při kontrole přezdívky: " . htmlspecialchars(mysqli_error($conn));
+                    }
+                }
             }
             ?>
 
-            <!-- Formulář -->
             <h2 class="form-title">Registration</h2>
             <form action="registration.php" method="post" class="mt-4">
                 <div class="mb-3">
-                    <!-- <label for="nickname" class="form-label">NickName:</label> -->
                     <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Zadejte Vaši přezdívku">
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="email" class="form-label">Email:</label> -->
                     <input type="email" class="form-control" id="email" name="email" placeholder="Zadejte Váš email">
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="password" class="form-label">Heslo:</label> -->
                     <input type="password" class="form-control" id="password" name="password" placeholder="Zadejte Vaše heslo">
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="repeat_password" class="form-label">Zopakujte heslo:</label> -->
                     <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Zadejte Vaše heslo znovu">
                 </div>
                 <button type="submit" class="btn btn-primary">Registrovat</button>
             </form>
+
+            <?php if (!empty($errors)) : ?>
+                <div class="error-container">
+                    <?php foreach ($errors as $error) : ?>
+                        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php include "../php/footer.php" ?>
         </div>
-        <!-- Chybové hlášky (mimo formulář) -->
-        <?php if (!empty($errors)) : ?>
-            <div class="error-container">
-                <?php foreach ($errors as $error) : ?>
-                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-        <?php include "../php/footer.php" ?>
     </div>
 </body>
 </html>
