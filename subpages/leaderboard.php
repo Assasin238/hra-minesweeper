@@ -32,6 +32,7 @@ if (!$result) {
     <header>
         <div class="navbar">
             <div class="logo"><a href="../index.php">Minesweeper Game</a></div>
+            <a href="subpages/logout.php" class="action_btn" id="logout-btn">Logout</a>
         </div>
     </header>
 

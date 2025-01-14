@@ -25,4 +25,14 @@ medium: 540px w 420px h
 large: 600px w 500px h
 
 
+checknout klíč u nicknames
+ALTER TABLE users ADD UNIQUE (nick_name); do users
+nový TABLE
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nick_name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (nick_name) REFERENCES users(nick_name) ON DELETE CASCADE
+);
+
 jakmile tento projekt bude done tak implementovat prvky do své stránky a probably i upcoming website O_o - reg/log; db; leaderboard; mines; atd..... the more you know, you never know xddd

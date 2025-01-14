@@ -4,7 +4,51 @@ if (!isset($_SESSION["user"])) {
     header("Location: subpages/login.php");
     exit();
 }
+
+require_once "subpages/database.php"; // Připojení k databázi
+
+$isAdmin = false;
+$nickName = $_SESSION["user"];
+echo "Checking admin for user: " . htmlspecialchars($nickName) . "<br>";
+echo "Session User: " . htmlspecialchars($_SESSION["user"]) . "<br>";
+
+// Převod na malá písmena pro porovnání bez ohledu na velikost písmen
+$nickName = strtolower($nickName);
+
+$sql = "SELECT * FROM admins WHERE LOWER(nick_name) = LOWER(?)";
+$stmt = mysqli_prepare($conn, $sql);
+
+// Kontrola, zda příprava dotazu probíhla správně
+if ($stmt === false) {
+    echo "SQL query preparation failed.<br>";
+    exit();
+}
+
+mysqli_stmt_bind_param($stmt, "s", $nickName);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+// Kontrola, zda dotaz vrátil nějaký výsledek
+if ($result) {
+    echo "SQL query executed successfully.<br>";
+    if (mysqli_fetch_assoc($result)) {
+        $isAdmin = true;
+        echo "User is admin.<br>";
+    } else {
+        echo "User is not admin.<br>";
+    }
+} else {
+    echo "SQL query failed.<br>";
+}
+
+// Pokud je uživatel administrátor, zobrazí se příslušná zpráva
+if ($isAdmin) {
+    echo "User is an admin.";
+} else {
+    echo "User is not an admin.";
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +74,10 @@ if (!isset($_SESSION["user"])) {
                 <a href="#" data-lang="fr">Français</a>
             </div>
         </div>
+        <!-- Admin button -->
+        <?php if ($isAdmin): ?>
+            <a href="subpages/admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
+        <?php endif; ?>
         <!-- Logout button -->
         <a href="subpages/logout.php" class="action_btn" id="logout-btn">Logout</a>
     </div>
