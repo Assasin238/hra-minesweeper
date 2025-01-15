@@ -30,7 +30,6 @@ if ($stmt) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/home.css">
-    <script src="scripts/language.js" defer></script>
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <title>Minesweeper Game</title>
 </head>
@@ -38,16 +37,6 @@ if ($stmt) {
 <header>
     <div class="navbar">
         <div class="logo"><a href="#" id="title">Minesweeper Game</a></div>
-        <!-- Language dropdown -->
-        <div class="language-selector">
-            <button id="current-lang"></button>
-            <div class="language-menu">
-                <a href="#" data-lang="en">English</a>
-                <a href="#" data-lang="cs">Čeština</a>
-                <a href="#" data-lang="de">Deutsch</a>
-                <a href="#" data-lang="fr">Français</a>
-            </div>
-        </div>
         <!-- Admin button -->
         <?php if ($isAdmin): ?>
             <a href="subpages/admin.php" class="action_btn" id="admin-btn">Admin Panel</a>

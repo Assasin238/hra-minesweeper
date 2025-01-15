@@ -74,7 +74,7 @@ if ($stmt) {
 <body>
 <header>
         <div class="navbar">
-            <div class="logo"><a href="../index.php" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
+            <div class="logo"><a href="../index.php">Minesweeper Game</a></div>
             <?php if ($isAdmin): ?>
             <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
             <a href="leaderboard.php" class="action_btn">leaderboard</a>
@@ -89,7 +89,7 @@ if ($stmt) {
 
     </header>
 <div id="game-container">
-    <div id="flag-counter">Vlajky: 0/0</div> <!-- Počítadlo vlajek -->
+    <div id="flag-counter">Flags: 0/0</div> <!-- Počítadlo vlajek -->
     <table id="game-grid"></table>
 </div>
 <?php include "../php/footer.php" ?>

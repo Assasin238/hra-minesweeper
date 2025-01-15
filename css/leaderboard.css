@@ -42,10 +42,6 @@ header {
     text-decoration: none;
 }
 
-.navbar .logo a:hover {
-    color: rgb(69, 71, 69);
-}
-
 /* Tabulka Leaderboard */
 main {
     max-width: 1200px;

@@ -40,66 +40,105 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["new_admin"])) {
     }
 }
 
-// Načtení všech uživatelů
-$usersSql = "SELECT nick_name, email FROM users";
-$usersResult = mysqli_query($conn, $usersSql);
+// Načtení všech adminů
+$adminsQuery = "SELECT u.nick_name, u.email FROM users u 
+                INNER JOIN admins a ON LOWER(u.nick_name) = LOWER(a.nick_name)";
+$adminsResult = mysqli_query($conn, $adminsQuery);
+
+if (!$adminsResult) {
+    die("Chyba při načítání adminů: " . mysqli_error($conn));
+}
+
+// Načtení všech guestů
+$guestsQuery = "SELECT u.nick_name, u.email FROM users u 
+                LEFT JOIN admins a ON LOWER(u.nick_name) = LOWER(a.nick_name)
+                WHERE a.nick_name IS NULL";
+$guestsResult = mysqli_query($conn, $guestsQuery);
+
+if (!$guestsResult) {
+    die("Chyba při načítání guestů: " . mysqli_error($conn));
+}
+
+// Zpracování odebrání admina
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
+    $adminToRemove = trim($_POST["remove_admin"]);
+    
+    // Odebrání admina z databáze
+    $removeAdminSql = "DELETE FROM admins WHERE nick_name = ?";
+    $stmt = mysqli_prepare($conn, $removeAdminSql);
+    mysqli_stmt_bind_param($stmt, "s", $adminToRemove);
+    mysqli_stmt_execute($stmt);
+    
+    $message = "Admin byl odebrán.";
+    // Obnovení seznamu adminů
+    $adminsResult = mysqli_query($conn, "SELECT * FROM admins");
+}
 ?>
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Správa uživatelů</title>
     <link rel="stylesheet" href="../css/admin.css">
-    <script src="../scripts/language.js" defer></script>
-    <title>Admin Panel</title>
 </head>
 <body>
 <header>
     <div class="navbar">
         <div class="logo"><a href="../index.php" id="title">Minesweeper Game</a></div>
-        <!-- Language dropdown -->
-        <div class="language-selector">
-            <button id="current-lang"></button>
-            <div class="language-menu">
-                <a href="#" data-lang="en">English</a>
-                <a href="#" data-lang="cs">Čeština</a>
-                <a href="#" data-lang="de">Deutsch</a>
-                <a href="#" data-lang="fr">Français</a>
-            </div>
-        </div>
-        <a href="minesweeper.php" class="action_btn" id="logout-btn">Game</a>
         <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
     </div>
 </header>
-<main>
-    <section id="main">
-        <h1>Seznam uživatelů</h1>
-        <div class="user-list">
-            <?php while ($user = mysqli_fetch_assoc($usersResult)): ?>
-                <div class="user-card">
-                    <p><strong>Přezdívka:</strong> <?= htmlspecialchars($user["nick_name"]) ?></p>
-                    <p><strong>Email:</strong> <?= htmlspecialchars($user["email"]) ?></p>
-                    <form method="POST" class="delete-user-form">
-                        <input type="hidden" name="delete_user" value="<?= htmlspecialchars($user["nick_name"]) ?>">
-                        <button type="submit" class="delete-btn">Odstranit</button>
-                    </form>
-                </div>
-            <?php endwhile; ?>
+    <main>
+    <!-- Sekce pro administrátory -->
+    <!-- HTML -->
+<section id="admins">
+    <h1>Administrators</h1>
+    <?php while ($admin = mysqli_fetch_assoc($adminsResult)): ?>
+        <div class="user-card">
+            <div class="user-info">
+                <p><strong>Nickname:</strong> <?= htmlspecialchars($admin["nick_name"]) ?></p>
+                <p><strong>Email:</strong> <?= htmlspecialchars($admin["email"]) ?></p>
+            </div>
+            <form method="POST" class="remove-form">
+                <input type="hidden" name="remove_admin" value="<?= htmlspecialchars($admin["nick_name"]) ?>">
+                <button class="action-btn delete-btn" type="submit">Odstranit</button>
+            </form>
         </div>
-    </section>
-    <section>
-        <h2>Přidat nového admina</h2>
-        <form method="POST" class="add-admin-form">
-            <input type="text" name="new_admin" placeholder="Zadejte přezdívku uživatele" required>
-            <button class="action_btn" type="submit">Přidat</button>
+    <?php endwhile; ?>
+</section>
+
+<section id="guests">
+    <h1>Hosts</h1>
+    <?php while ($guest = mysqli_fetch_assoc($guestsResult)): ?>
+        <div class="user-card">
+            <div class="user-info">
+                <p><strong>Nickname:</strong> <?= htmlspecialchars($guest["nick_name"]) ?></p>
+                <p><strong>Email:</strong> <?= htmlspecialchars($guest["email"]) ?></p>
+            </div>
+            <form method="POST" class="remove-form">
+                <input type="hidden" name="remove_user" value="<?= htmlspecialchars($guest["nick_name"]) ?>">
+                <button class="action-btn delete-btn" type="submit">Odstranit</button>
+            </form>
+        </div>
+    <?php endwhile; ?>
+</section>
+
+    <!-- Sekce pro přidání nového administrátora -->
+    <section id="add-admin">
+        <h2>Add new administrator</h2>
+        <form method="POST">
+            <input type="text" name="new_admin" placeholder="Type user nickname" required>
+            <button class="action_btn" type="submit">Add</button>
         </form>
         <?php if (isset($message)): ?>
-            <p class="message"><?= htmlspecialchars($message) ?></p>
+            <p><?= htmlspecialchars($message) ?></p>
         <?php endif; ?>
     </section>
 </main>
-
 <?php include "../php/footer.php" ?>
 </body>
 </html>
+

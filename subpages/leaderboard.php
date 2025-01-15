@@ -48,16 +48,6 @@ if ($stmt) {
 <header>
     <div class="navbar">
         <div class="logo"><a href="../index.php" id="title">Minesweeper Game</a></div>
-        <!-- Language dropdown -->
-        <div class="language-selector">
-            <button id="current-lang"></button>
-            <div class="language-menu">
-                <a href="#" data-lang="en">English</a>
-                <a href="#" data-lang="cs">Čeština</a>
-                <a href="#" data-lang="de">Deutsch</a>
-                <a href="#" data-lang="fr">Français</a>
-            </div>
-        </div>
         <!-- Admin button -->
         <?php if ($isAdmin): ?>
             <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>

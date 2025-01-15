@@ -13,6 +13,17 @@ function createGameGrid(rows, cols) {
     const gameGridElement = document.getElementById('game-grid');
     gameGridElement.innerHTML = ''; // Vyčistíme obsah pro nový start hry
 
+    // Nastavení velikosti pole podle obtížnosti
+    const difficulty = getDifficulty();
+    const sizes = {
+        easy: { width: 450, height: 360 },
+        medium: { width: 540, height: 420 }
+    };
+
+    const { width, height } = sizes[difficulty];
+    gameGridElement.style.width = `${width}px`;
+    gameGridElement.style.height = `${height}px`;
+
     for (let row = 0; row < rows; row++) {
         const rowElement = document.createElement('tr');
 
@@ -32,6 +43,7 @@ function createGameGrid(rows, cols) {
 
     initializeGameGrid(rows, cols);
 }
+
 
 // Inicializace prázdné mřížky
 function initializeGameGrid(rows, cols) {
@@ -199,13 +211,8 @@ function checkWin() {
 function handleRightClick(event, row, col, cellElement) {
     event.preventDefault();
 
-    if (gameOver || visited[row][col]) return; // Pokud je buňka již navštívená, nemůžeme ji označit vlajkou
-
-    // Pokud buňka již obsahuje číslo nebo je prázdná (odhalena), nemůžeme položit vlajku
-    const cellValue = gameGrid[row][col];
-    if (cellValue !== 0 && cellValue !== 'M') {
-        return; // Buňka je odhalena s číslem, vlajku nelze položit
-    }
+    // Kontrola, zda je hra ukončená nebo buňka již odhalená
+    if (gameOver || cellElement.classList.contains('revealed')) return;
 
     if (cellElement.classList.contains('flagged')) {
         cellElement.classList.remove('flagged');
@@ -225,6 +232,7 @@ function handleRightClick(event, row, col, cellElement) {
     updateFlagCounter();
 }
 
+
 // sound u vlajky
 function playSound(action) {
     const sounds = {
@@ -240,7 +248,7 @@ function playSound(action) {
 // Funkce pro aktualizaci počitadla vlajek
 function updateFlagCounter() {
     const flagCounterElement = document.getElementById('flag-counter');
-    flagCounterElement.textContent = `Vlajky: ${flagsPlaced}/${mineCount}`;
+    flagCounterElement.textContent = `Flags: ${flagsPlaced}/${mineCount}`;
 }
 
 // Funkce pro výběr obtížnosti
@@ -257,14 +265,9 @@ function setDifficulty(difficulty) {
             cols = 16;
             mineCount = 40;
             break;
-        case 'hard':
-            rows = 16;
-            cols = 30;
-            mineCount = 99;
-            break;
         default:
-            rows = 10;
-            cols = 10;
+            rows = 8;
+            cols = 8;
             mineCount = 10;
     }
 
@@ -277,10 +280,10 @@ function setDifficulty(difficulty) {
     createGameGrid(rows, cols);
 
     const flagCounterElement = document.getElementById('flag-counter');
-    flagCounterElement.textContent = `Vlajky: 0/${mineCount}`;
+    flagCounterElement.textContent = `Flags: 0/${mineCount}`;
 
     const timerElement = document.getElementById('timer');
-    timerElement.textContent = 'Čas: 0s';
+    timerElement.textContent = 'Time: 0s';
 }
 
 // Spuštění časovače
@@ -290,7 +293,7 @@ function startTimer() {
         const currentTime = Date.now();
         const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
         const timerElement = document.getElementById('timer');
-        timerElement.textContent = `Čas: ${elapsedSeconds}s`;
+        timerElement.textContent = `Time: ${elapsedSeconds}s`;
     }, 1000);
 }
 
@@ -313,9 +316,8 @@ document.addEventListener('DOMContentLoaded', () => {
     difficultySelector.id = 'difficulty-selector';
 
     const difficulties = [
-        { value: 'easy', label: 'Lehká' },
-        { value: 'medium', label: 'Střední' },
-        { value: 'hard', label: 'Těžká' }
+        { value: 'easy', label: 'Easy' },
+        { value: 'medium', label: 'Medium' }
     ];
 
     difficulties.forEach(diff => {
@@ -334,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Přidání časovače
     const timerElement = document.createElement('div');
     timerElement.id = 'timer';
-    timerElement.textContent = 'Čas: 0s';
+    timerElement.textContent = 'Time: 0s';
     container.insertBefore(timerElement, container.firstChild);
 
     // Inicializace hry
@@ -375,12 +377,6 @@ function sendScoreToServer(difficulty, time) {
     });
 }
 
-
-
-
-
-
-// Zavolej tuto funkci po výhře hráče:
 function onGameWin(difficulty, elapsedTime) {
     console.log("onGameWin called with difficulty:", difficulty, "and time:", elapsedTime);
     sendScoreToServer(difficulty, elapsedTime);
@@ -391,4 +387,3 @@ function getDifficulty() {
     const difficultySelector = document.getElementById('difficulty-selector');
     return difficultySelector ? difficultySelector.value : 'easy'; // Pokud není vybraná obtížnost, vrátí 'easy'
 }
-
