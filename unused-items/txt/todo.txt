@@ -25,8 +25,9 @@ medium: 540px w 420px h
 large: 600px w 500px h
 
 
-checknout klíč u nicknames
-ALTER TABLE users ADD UNIQUE (nick_name); do users
+checknout klíč u nicknames -- do users
+ALTER TABLE users ADD UNIQUE (nick_name);
+
 nový TABLE
 CREATE TABLE admins (
     id INT AUTO_INCREMENT PRIMARY KEY,

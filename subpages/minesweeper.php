@@ -42,8 +42,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 }
-?>
 
+$isAdmin = false;
+$nickName = strtolower($_SESSION["user"]); // Převod na malá písmena pro porovnání bez ohledu na velikost písmen
+
+$sql = "SELECT * FROM admins WHERE LOWER(nick_name) = LOWER(?)";
+$stmt = mysqli_prepare($conn, $sql);
+
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "s", $nickName);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result && mysqli_fetch_assoc($result)) {
+        $isAdmin = true;
+    }
+}
+?>
 
 
 <!DOCTYPE html>
@@ -60,9 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <header>
         <div class="navbar">
             <div class="logo"><a href="../index.php" title="Přejít na hlavní stránku">Minesweeper Game</a></div>
-            <!-- Privacy action button -->
+            <?php if ($isAdmin): ?>
+            <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
             <a href="leaderboard.php" class="action_btn">leaderboard</a>
-            <a href="logout.php" class="action_btn">Logout</a>
+            <?php endif; ?>
+            <!-- Logout button -->
+            <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
             <!-- Toggle button for responsive menu -->
             <div class="toggle_btn">
                 <i class="fa-solid fa-bars"></i>

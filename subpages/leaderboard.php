@@ -18,6 +18,22 @@ $result = mysqli_query($conn, $sql);
 if (!$result) {
     die("Query failed: " . mysqli_error($conn)); // Pokud dotaz selže
 }
+
+$isAdmin = false;
+$nickName = strtolower($_SESSION["user"]); // Převod na malá písmena pro porovnání bez ohledu na velikost písmen
+
+$sql = "SELECT * FROM admins WHERE LOWER(nick_name) = LOWER(?)";
+$stmt = mysqli_prepare($conn, $sql);
+
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "s", $nickName);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result && mysqli_fetch_assoc($result)) {
+        $isAdmin = true;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,12 +45,27 @@ if (!$result) {
     <link rel="stylesheet" href="../css/leaderboard.css">
 </head>
 <body>
-    <header>
-        <div class="navbar">
-            <div class="logo"><a href="../index.php">Minesweeper Game</a></div>
-            <a href="subpages/logout.php" class="action_btn" id="logout-btn">Logout</a>
+<header>
+    <div class="navbar">
+        <div class="logo"><a href="../index.php" id="title">Minesweeper Game</a></div>
+        <!-- Language dropdown -->
+        <div class="language-selector">
+            <button id="current-lang"></button>
+            <div class="language-menu">
+                <a href="#" data-lang="en">English</a>
+                <a href="#" data-lang="cs">Čeština</a>
+                <a href="#" data-lang="de">Deutsch</a>
+                <a href="#" data-lang="fr">Français</a>
+            </div>
         </div>
-    </header>
+        <!-- Admin button -->
+        <?php if ($isAdmin): ?>
+            <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
+        <?php endif; ?>
+        <!-- Logout button -->
+        <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
+    </div>
+</header>
 
     <main>
         <h1>Leaderboard</h1>

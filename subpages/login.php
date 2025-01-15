@@ -27,12 +27,11 @@ if (isset($_SESSION["user"])) {
             $sql = "SELECT * FROM users WHERE email = '$email'";
             $result = mysqli_query($conn, $sql);
             $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
-            if ($user){
-                if (password_verify($password, $user["password"])){
+            if ($user) {
+                if (password_verify($password, $user["password"])) {
                     // Uložení uživatelských údajů do session
-                    $_SESSION["user"] = "yes";
-                    $_SESSION["user_id"] = $user["id"];  // Uložení ID uživatele do session
-                    $_SESSION["nick_name"] = $user["nick_name"];  // Uložení přezdívky uživatele
+                    $_SESSION["user"] = $user["nick_name"]; // Uložení přezdívky do session
+                    $_SESSION["user_id"] = $user["id"];     // Uložení ID uživatele do session
                     header("Location: ../index.php");
                     die();
                 } else {

@@ -8,47 +8,21 @@ if (!isset($_SESSION["user"])) {
 require_once "subpages/database.php"; // Připojení k databázi
 
 $isAdmin = false;
-$nickName = $_SESSION["user"];
-echo "Checking admin for user: " . htmlspecialchars($nickName) . "<br>";
-echo "Session User: " . htmlspecialchars($_SESSION["user"]) . "<br>";
-
-// Převod na malá písmena pro porovnání bez ohledu na velikost písmen
-$nickName = strtolower($nickName);
+$nickName = strtolower($_SESSION["user"]); // Převod na malá písmena pro porovnání bez ohledu na velikost písmen
 
 $sql = "SELECT * FROM admins WHERE LOWER(nick_name) = LOWER(?)";
 $stmt = mysqli_prepare($conn, $sql);
 
-// Kontrola, zda příprava dotazu probíhla správně
-if ($stmt === false) {
-    echo "SQL query preparation failed.<br>";
-    exit();
-}
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "s", $nickName);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-mysqli_stmt_bind_param($stmt, "s", $nickName);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-// Kontrola, zda dotaz vrátil nějaký výsledek
-if ($result) {
-    echo "SQL query executed successfully.<br>";
-    if (mysqli_fetch_assoc($result)) {
+    if ($result && mysqli_fetch_assoc($result)) {
         $isAdmin = true;
-        echo "User is admin.<br>";
-    } else {
-        echo "User is not admin.<br>";
     }
-} else {
-    echo "SQL query failed.<br>";
-}
-
-// Pokud je uživatel administrátor, zobrazí se příslušná zpráva
-if ($isAdmin) {
-    echo "User is an admin.";
-} else {
-    echo "User is not an admin.";
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">

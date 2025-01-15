@@ -98,21 +98,18 @@ tbody td:first-child {
     font-weight: bold;
 }
 
-/* Tlačítko zpět */
+/* Styling for the action button */
 .action_btn {
-    display: block;
-    width: 150px;
-    margin: 1rem auto;
-    text-align: center;
     background-color: rgb(69, 71, 69);
-    color: white;
+    color: #fff;
     padding: 0.5rem 1rem;
     border: none;
+    outline: none;
     border-radius: 20px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: scale 0.2s ease;
 }
 
 .action_btn:hover {
