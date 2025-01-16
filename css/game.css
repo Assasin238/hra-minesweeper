@@ -10,6 +10,13 @@ body{
     background-color: rgb(128, 141, 128);
 }
 
+/* Header styling */
+header {
+    position: relative;
+    padding: 0 2rem;
+}
+
+
 /* Styling for the action button */
 .action_btn {
     background-color: rgb(69, 71, 69);
@@ -113,10 +120,6 @@ a {
     text-decoration: none;
     font-size: 1rem;
     color: black;
-}
-
-a:hover {
-    /*color: blue; barvu nevím*/
 }
 
 /* Styling for the navigation bar */

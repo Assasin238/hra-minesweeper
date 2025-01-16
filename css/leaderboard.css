@@ -42,7 +42,67 @@ header {
     text-decoration: none;
 }
 
-/* Tabulka Leaderboard */
+/* Leaderboard Container */
+.leaderboard-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Tři sloupce stejné šířky */
+    gap: 0.5rem;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+/* Leaderboard Header & Rows */
+.leaderboard-header, .leaderboard-row {
+    display: contents;
+}
+
+.leaderboard-header span, .leaderboard-row span {
+    padding: 0.5rem;
+    text-align: center;
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-header span {
+    font-weight: bold;
+    background-color: #333;
+}
+
+.leaderboard-row:nth-child(odd) span {
+    background-color: #555;
+}
+
+.leaderboard-row:nth-child(even) span {
+    background-color: #666;
+}
+
+/* Action Button */
+.action_btn {
+    display: inline-block;
+    background-color: rgb(69, 71, 69);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.action_btn:hover {
+    transform: scale(1.05);
+}
+
+.action_btn:active {
+    transform: scale(0.95);
+}
+
+/* Main Content */
 main {
     max-width: 1200px;
     margin: 2rem auto;
@@ -58,67 +118,8 @@ h1 {
     color: #ecf0f1;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-thead {
-    background-color: rgb(69, 71, 69);
-    color: white;
-}
-
-thead th {
-    padding: 1rem;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-}
-
-tbody tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-tbody tr:hover {
-    background-color: rgba(69, 71, 69, 0.2);
-    transition: background-color 0.3s ease;
-}
-
-tbody td {
-    padding: 0.8rem;
-    font-size: 1rem;
-    color: #ecf0f1;
-}
-
-tbody td:first-child {
-    font-weight: bold;
-}
-
-/* Styling for the action button */
-.action_btn {
-    background-color: rgb(69, 71, 69);
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border: none;
-    outline: none;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: scale 0.2s ease;
-}
-
-.action_btn:hover {
-    background-color: rgb(90, 90, 90);
-    transform: scale(1.05);
-}
-
-.action_btn:active {
-    transform: scale(0.95);
-}
-
 /* Footer */
-footer{
+footer {
     background: transparent;
     color: black;
     text-align: center;

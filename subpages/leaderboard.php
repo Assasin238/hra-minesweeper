@@ -55,32 +55,29 @@ if ($stmt) {
 
 <main>
     <h1>Leaderboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Difficulty</th>
-                <th>Time (s)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (mysqli_num_rows($leaderboardResult) > 0): ?>
-                <?php while ($row = mysqli_fetch_assoc($leaderboardResult)): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row["nick_name"]) ?></td>
-                        <td><?= htmlspecialchars(ucfirst($row["difficulty"])) ?></td>
-                        <td><?= htmlspecialchars($row["best_time"]) ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="3">No results yet.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+    <div class="leaderboard-container">
+        <div class="leaderboard-header">
+            <span>Player</span>
+            <span>Difficulty</span>
+            <span>Time (s)</span>
+        </div>
+        <?php if (mysqli_num_rows($leaderboardResult) > 0): ?>
+            <?php while ($row = mysqli_fetch_assoc($leaderboardResult)): ?>
+                <div class="leaderboard-row">
+                    <span><?= htmlspecialchars($row["nick_name"]) ?></span>
+                    <span><?= htmlspecialchars(ucfirst($row["difficulty"])) ?></span>
+                    <span><?= htmlspecialchars($row["best_time"]) ?></span>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="leaderboard-row">
+                <span colspan="3">No results yet.</span>
+            </div>
+        <?php endif; ?>
+    </div>
     <a href="minesweeper.php" class="action_btn">Back to Game</a>
 </main>
 <?php include "../php/footer.php" ?>
 </body>
 </html>
+
