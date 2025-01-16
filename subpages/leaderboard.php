@@ -8,17 +8,16 @@ if (!isset($_SESSION["user"])) {
     exit();
 }
 
-// Načtení dat z databáze
-$sql = "SELECT users.nick_name, leaderboard.difficulty, leaderboard.time 
-        FROM leaderboard 
-        JOIN users ON leaderboard.user_id = users.id 
-        ORDER BY leaderboard.difficulty, leaderboard.time ASC 
+// Načtení dat z databáze, aby se zobrazilo pouze nejlepší skóre každého uživatele pro každou obtížnost
+$sql = "SELECT users.nick_name, leaderboard.difficulty, MIN(leaderboard.time) AS best_time
+        FROM leaderboard
+        JOIN users ON leaderboard.user_id = users.id
+        GROUP BY users.nick_name, leaderboard.difficulty
+        ORDER BY leaderboard.difficulty, best_time ASC
         LIMIT 10";
-$result = mysqli_query($conn, $sql);
-if (!$result) {
-    die("Query failed: " . mysqli_error($conn)); // Pokud dotaz selže
-}
+$leaderboardResult = mysqli_query($conn, $sql);
 
+// Kontrola, zda je uživatel admin
 $isAdmin = false;
 $nickName = strtolower($_SESSION["user"]); // Převod na malá písmena pro porovnání bez ohledu na velikost písmen
 
@@ -28,14 +27,13 @@ $stmt = mysqli_prepare($conn, $sql);
 if ($stmt) {
     mysqli_stmt_bind_param($stmt, "s", $nickName);
     mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $adminResult = mysqli_stmt_get_result($stmt);
 
-    if ($result && mysqli_fetch_assoc($result)) {
+    if ($adminResult && mysqli_fetch_assoc($adminResult)) {
         $isAdmin = true;
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,44 +46,41 @@ if ($stmt) {
 <header>
     <div class="navbar">
         <div class="logo"><a href="../index.php" id="title">Minesweeper Game</a></div>
-        <!-- Admin button -->
         <?php if ($isAdmin): ?>
             <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
         <?php endif; ?>
-        <!-- Logout button -->
         <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
     </div>
 </header>
 
-    <main>
-        <h1>Leaderboard</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Player</th>
-                    <th>Difficulty</th>
-                    <th>Time (s)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row["nick_name"]) ?></td>
-                            <td><?= htmlspecialchars(ucfirst($row["difficulty"])) ?></td>
-                            <td><?= htmlspecialchars($row["time"]) ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
+<main>
+    <h1>Leaderboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Difficulty</th>
+                <th>Time (s)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (mysqli_num_rows($leaderboardResult) > 0): ?>
+                <?php while ($row = mysqli_fetch_assoc($leaderboardResult)): ?>
                     <tr>
-                        <td colspan="3">No results yet.</td>
+                        <td><?= htmlspecialchars($row["nick_name"]) ?></td>
+                        <td><?= htmlspecialchars(ucfirst($row["difficulty"])) ?></td>
+                        <td><?= htmlspecialchars($row["best_time"]) ?></td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <a href="minesweeper.php" class="action_btn">Back to Game</a>
-    </main>
-    <?php include "../php/footer.php" ?>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="3">No results yet.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    <a href="minesweeper.php" class="action_btn">Back to Game</a>
+</main>
+<?php include "../php/footer.php" ?>
 </body>
 </html>
-

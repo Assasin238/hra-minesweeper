@@ -71,10 +71,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
     
     $message = "Admin byl odebrán.";
     // Obnovení seznamu adminů
-    $adminsResult = mysqli_query($conn, "SELECT * FROM admins");
+    $adminsResult = mysqli_query($conn, $adminsQuery);
+}
+
+// Zpracování odebrání hosta
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
+    $userToRemove = trim($_POST["remove_user"]);
+    
+    // Odebrání uživatele z databáze
+    $removeUserSql = "DELETE FROM users WHERE nick_name = ?";
+    $stmt = mysqli_prepare($conn, $removeUserSql);
+    mysqli_stmt_bind_param($stmt, "s", $userToRemove);
+    mysqli_stmt_execute($stmt);
+    
+    $message = "Uživatel byl odstraněn.";
+    // Obnovení seznamu hostů
+    $guestsResult = mysqli_query($conn, $guestsQuery);
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="cs">
@@ -91,40 +105,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
         <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
     </div>
 </header>
-    <main>
+<main>
     <!-- Sekce pro administrátory -->
-    <!-- HTML -->
-<section id="admins">
-    <h1>Administrators</h1>
-    <?php while ($admin = mysqli_fetch_assoc($adminsResult)): ?>
-        <div class="user-card">
-            <div class="user-info">
-                <p><strong>Nickname:</strong> <?= htmlspecialchars($admin["nick_name"]) ?></p>
-                <p><strong>Email:</strong> <?= htmlspecialchars($admin["email"]) ?></p>
+    <section id="admins">
+        <h1>Administrators</h1>
+        <?php while ($admin = mysqli_fetch_assoc($adminsResult)): ?>
+            <div class="user-card">
+                <div class="user-info">
+                    <p><strong>Nickname:</strong> <?= htmlspecialchars($admin["nick_name"]) ?></p>
+                    <p><strong>Email:</strong> <?= htmlspecialchars($admin["email"]) ?></p>
+                </div>
+                <form method="POST" class="remove-form">
+                    <input type="hidden" name="remove_admin" value="<?= htmlspecialchars($admin["nick_name"]) ?>">
+                    <button class="action-btn delete-btn" type="submit">Remove</button>
+                </form>
             </div>
-            <form method="POST" class="remove-form">
-                <input type="hidden" name="remove_admin" value="<?= htmlspecialchars($admin["nick_name"]) ?>">
-                <button class="action-btn delete-btn" type="submit">Odstranit</button>
-            </form>
-        </div>
-    <?php endwhile; ?>
-</section>
+        <?php endwhile; ?>
+    </section>
 
-<section id="guests">
-    <h1>Hosts</h1>
-    <?php while ($guest = mysqli_fetch_assoc($guestsResult)): ?>
-        <div class="user-card">
-            <div class="user-info">
-                <p><strong>Nickname:</strong> <?= htmlspecialchars($guest["nick_name"]) ?></p>
-                <p><strong>Email:</strong> <?= htmlspecialchars($guest["email"]) ?></p>
+    <!-- Sekce pro hosty -->
+    <section id="guests">
+        <h1>Hosts</h1>
+        <?php while ($guest = mysqli_fetch_assoc($guestsResult)): ?>
+            <div class="user-card">
+                <div class="user-info">
+                    <p><strong>Nickname:</strong> <?= htmlspecialchars($guest["nick_name"]) ?></p>
+                    <p><strong>Email:</strong> <?= htmlspecialchars($guest["email"]) ?></p>
+                </div>
+                <form method="POST" class="remove-form">
+                    <input type="hidden" name="remove_user" value="<?= htmlspecialchars($guest["nick_name"]) ?>">
+                    <button class="action-btn delete-btn" type="submit">Remove</button>
+                </form>
             </div>
-            <form method="POST" class="remove-form">
-                <input type="hidden" name="remove_user" value="<?= htmlspecialchars($guest["nick_name"]) ?>">
-                <button class="action-btn delete-btn" type="submit">Odstranit</button>
-            </form>
-        </div>
-    <?php endwhile; ?>
-</section>
+        <?php endwhile; ?>
+    </section>
 
     <!-- Sekce pro přidání nového administrátora -->
     <section id="add-admin">
@@ -134,11 +148,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
             <button class="action_btn" type="submit">Add</button>
         </form>
         <?php if (isset($message)): ?>
-            <p><?= htmlspecialchars($message) ?></p>
+            <p id="message"><?= htmlspecialchars($message) ?></p>
         <?php endif; ?>
     </section>
 </main>
+
 <?php include "../php/footer.php" ?>
+
+<script>
+    // Počkej 3 sekundy a pak zprávu skryj
+    setTimeout(() => {
+        const message = document.getElementById('message');
+        if (message) {
+            message.style.transition = 'opacity 0.5s';
+            message.style.opacity = '0'; // Plynulé zmizení
+            setTimeout(() => message.remove(), 500); // Odstranění z DOM po 0.5 sekundách
+        }
+    }, 3000); // Zpráva zmizí po 3 sekundách
+</script>
+
 </body>
 </html>
-

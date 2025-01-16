@@ -211,8 +211,7 @@ function checkWin() {
 function handleRightClick(event, row, col, cellElement) {
     event.preventDefault();
 
-    // Kontrola, zda je hra ukončená nebo buňka již odhalená
-    if (gameOver || cellElement.classList.contains('revealed')) return;
+    if (gameOver || visited[row][col]) return; // Pokud je buňka již navštívená, nemůžeme ji označit vlajkou
 
     if (cellElement.classList.contains('flagged')) {
         cellElement.classList.remove('flagged');
@@ -231,7 +230,6 @@ function handleRightClick(event, row, col, cellElement) {
 
     updateFlagCounter();
 }
-
 
 // sound u vlajky
 function playSound(action) {
@@ -376,6 +374,7 @@ function sendScoreToServer(difficulty, time) {
         console.error("Error:", error);
     });
 }
+
 
 function onGameWin(difficulty, elapsedTime) {
     console.log("onGameWin called with difficulty:", difficulty, "and time:", elapsedTime);

@@ -77,8 +77,8 @@ if ($stmt) {
             <div class="logo"><a href="../index.php">Minesweeper Game</a></div>
             <?php if ($isAdmin): ?>
             <a href="admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
-            <a href="leaderboard.php" class="action_btn">leaderboard</a>
             <?php endif; ?>
+            <a href="leaderboard.php" class="action_btn">leaderboard</a>
             <!-- Logout button -->
             <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
             <!-- Toggle button for responsive menu -->
