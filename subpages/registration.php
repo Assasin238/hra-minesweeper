@@ -32,13 +32,13 @@ if (isset($_SESSION["user"])) {
                     $errors[] = "Všechny pole jsou povinné.";
                 }
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = "Zadejte platný email.";
+                    $errors[] = "Enter valid email.";
                 }
                 if (strlen($password) < 12) {
-                    $errors[] = "Heslo musí mít alespoň 12 znaků.";
+                    $errors[] = "Password must be atleast 12 symbols.";
                 }
                 if ($password !== $passwordRepeat) {
-                    $errors[] = "Hesla se neshodují.";
+                    $errors[] = "Passwords doesn't match.";
                 }
 
                 if (empty($errors)) {
@@ -54,7 +54,7 @@ if (isset($_SESSION["user"])) {
                         mysqli_stmt_store_result($checkStmt);
 
                         if (mysqli_stmt_num_rows($checkStmt) > 0) {
-                            $errors[] = "Tato přezdívka je již používána.";
+                            $errors[] = "This nickname is already registrated.";
                         } else {
                             // Kontrola, zda email již existuje
                             $checkEmailSql = "SELECT email FROM users WHERE email = ?";
@@ -64,7 +64,7 @@ if (isset($_SESSION["user"])) {
                                 mysqli_stmt_store_result($checkStmt);
 
                                 if (mysqli_stmt_num_rows($checkStmt) > 0) {
-                                    $errors[] = "Tento email je již registrován.";
+                                    $errors[] = "This email is already registrated.";
                                 } else {
                                     // Vložení nového uživatele
                                     $password_hash = password_hash($password, PASSWORD_DEFAULT);
@@ -75,7 +75,7 @@ if (isset($_SESSION["user"])) {
                                         mysqli_stmt_bind_param($stmt, "sss", $nickName, $email, $password_hash);
 
                                         if (mysqli_stmt_execute($stmt)) {
-                                            echo "<div class='alert alert-success'>Registrace byla úspěšná, Přesměrováváme Vás na Login!</div>";
+                                            echo "<div class='alert alert-success'>Registration was successful, your being dericted to Login!</div>";
                                             echo "<script>
                                                 setTimeout(function() {
                                                     window.location.href = 'login.php';
@@ -102,18 +102,18 @@ if (isset($_SESSION["user"])) {
             <h2 class="form-title">Registration</h2>
             <form action="registration.php" method="post" class="mt-4">
                 <div class="mb-3">
-                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Zadejte Vaši přezdívku">
+                    <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Enter your nickname">
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Zadejte Váš email">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Zadejte Vaše heslo">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Zadejte Vaše heslo znovu">
+                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Repeat your password">
                 </div>
-                <button type="submit" class="btn btn-primary">Registrovat</button>
+                <button type="submit" class="btn btn-primary">Register</button>
             </form>
 
             <?php if (!empty($errors)) : ?>

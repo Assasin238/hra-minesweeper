@@ -34,9 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["new_admin"])) {
         $addStmt = mysqli_prepare($conn, $addAdminSql);
         mysqli_stmt_bind_param($addStmt, "s", $newAdmin);
         mysqli_stmt_execute($addStmt);
-        $message = "Uživatel byl přidán jako admin.";
+        $message = "User is being set as admin.";
     } else {
-        $message = "Uživatel neexistuje.";
+        $message = "User doesn't exist.";
     }
 }
 
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
     mysqli_stmt_bind_param($stmt, "s", $adminToRemove);
     mysqli_stmt_execute($stmt);
     
-    $message = "Admin byl odebrán.";
+    $message = "Admin removed.";
     // Obnovení seznamu adminů
     $adminsResult = mysqli_query($conn, $adminsQuery);
 }
@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
     mysqli_stmt_bind_param($stmt, "s", $userToRemove);
     mysqli_stmt_execute($stmt);
     
-    $message = "Uživatel byl odstraněn.";
+    $message = "User removed.";
     // Obnovení seznamu hostů
     $guestsResult = mysqli_query($conn, $guestsQuery);
 }
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Správa uživatelů</title>
+    <title>Minesweeper Game - Administration</title>
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
@@ -162,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
         if (message) {
             message.style.transition = 'opacity 0.5s';
             message.style.opacity = '0'; // Plynulé zmizení
-            setTimeout(() => message.remove(), 500); // Odstranění z DOM po 0.5 sekundách
+            setTimeout(() => message.remove(), 500);
         }
     }, 3000); // Zpráva zmizí po 3 sekundách
 </script>

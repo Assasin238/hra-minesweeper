@@ -39,7 +39,7 @@ if ($stmt) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minesweeper Leaderboard</title>
+    <title>Minesweeper - Leaderboard</title>
     <link rel="stylesheet" href="../css/leaderboard.css">
 </head>
 <body>
