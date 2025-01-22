@@ -16,35 +16,45 @@ if (isset($_SESSION["user"])) {
     <link rel="stylesheet" href="../css/login.css">
 </head>
 
+<body>
 <div class="form-container">
     <h2 class="form-title">Login</h2>
 
     <?php
-        if (isset($_POST["login"])){
+        if (isset($_POST["login"])) {
             $email = $_POST["email"];
             $password = $_POST["password"];
             require_once "database.php";
-            $sql = "SELECT * FROM users WHERE email = '$email'";
-            $result = mysqli_query($conn, $sql);
-            $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+            // Použití připraveného dotazu
+            $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email); // 's' značí, že je to string
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+
             if ($user) {
                 if (password_verify($password, $user["password"])) {
                     // Uložení uživatelských údajů do session
                     $_SESSION["user"] = $user["nick_name"]; // Uložení přezdívky do session
                     $_SESSION["user_id"] = $user["id"];     // Uložení ID uživatele do session
                     header("Location: ../index.php");
-                    die();
+                    exit();
                 } else {
                     echo "<div class='error-msg'>Password does not match</div>";
                 }
             } else {
                 echo "<div class='error-msg'>Email does not match</div>";
             }
+
+            // Zavření připraveného dotazu
+            $stmt->close();
+            $conn->close();
         }
     ?>
 
     <form action="login.php" method="post" class="form">
-        <input type="text" placeholder="Email" name="email" class="input-field" required><br>
+        <input type="email" placeholder="Email" name="email" class="input-field" required><br>
         <input type="password" placeholder="Password" name="password" class="input-field" required><br>
         <input type="submit" value="Login" name="login" class="submit-btn">
     </form>
@@ -54,6 +64,6 @@ if (isset($_SESSION["user"])) {
     </div>
 </div>
 
-<?php include "../php/footer.php" ?>
+<?php include "../footer/footer.php" ?>
 </body>
 </html>

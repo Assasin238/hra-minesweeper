@@ -6,14 +6,26 @@
 }
 
 
-body{
+body {
     background-color: rgb(128, 141, 128);
+    display: flex; /* Pro centrování obsahu */
+    justify-content: center; /* Centrovat horizontálně */
+    align-items: center; /* Centrovat vertikálně */
+    min-height: 100vh; /* Výška stránky */
+    margin: 0; /* Zrušit okraje stránky */
 }
 
 /* Header styling */
 header {
-    position: relative;
-    padding: 0 2rem;
+    width: 100%;
+    padding: 1rem 2rem; /* Vnitřní mezery */
+    display: flex;
+    justify-content: space-between; /* Odsazení mezi logem a odkazy */
+    align-items: center;
+    position: fixed; /* Upevnění navigace nahoře */
+    top: 0;
+    left: 0;
+    z-index: 10; /* Aby byl nad ostatními elementy */
 }
 
 
@@ -55,9 +67,7 @@ header {
     color: #ecf0f1;
     text-align: center;
     animation: fadeIn 1s ease-out;
-
-    /* Tento řádek zajistí centrování kontejneru na ose X */
-    margin: 0 auto;
+    margin: 5rem auto 0; /* Posun dolů pod navigaci */
 }
 
 
@@ -124,13 +134,12 @@ a {
 
 /* Styling for the navigation bar */
 .navbar {
-    width: 100%;
-    height: 60px;
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
 }
 
 /* Styling for the logo in the navigation bar */

@@ -141,6 +141,11 @@ footer{
     align-self: center;
 }
 
+a {
+    text-decoration: none;
+    color: #a09e9e;
+}
+
 /* Přidání responzivního designu, jen lehce */
 @media (max-width: 768px) {
     .container {

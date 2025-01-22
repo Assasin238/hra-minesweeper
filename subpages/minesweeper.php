@@ -92,6 +92,6 @@ if ($stmt) {
     <div id="flag-counter">Flags: 0/0</div> <!-- Počítadlo vlajek -->
     <table id="game-grid"></table>
 </div>
-<?php include "../php/footer.php" ?>
+<?php include "../footer/footer.php" ?>
 </body>
 </html>

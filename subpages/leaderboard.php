@@ -40,6 +40,7 @@ if ($stmt) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper - Leaderboard</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     <link rel="stylesheet" href="../css/leaderboard.css">
 </head>
 <body>
@@ -77,7 +78,7 @@ if ($stmt) {
     </div>
     <a href="minesweeper.php" class="action_btn">Back to Game</a>
 </main>
-<?php include "../php/footer.php" ?>
+<?php include "../footer/footer.php" ?>
 </body>
 </html>
 

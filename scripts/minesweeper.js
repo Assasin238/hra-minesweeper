@@ -6,12 +6,12 @@ let visited = []; // Sledování navštívených buněk (pro odhalování okolí
 let flagsPlaced = 0; // Počet položených vlajek
 let gameOver = false; // Kontrola stavu hry
 let timer; // Časovač
-let startTime; // Počáteční čas
+let startTime; // start času
 
 // Funkce pro vytvoření mřížky hry
 function createGameGrid(rows, cols) {
     const gameGridElement = document.getElementById('game-grid');
-    gameGridElement.innerHTML = ''; // Vyčistíme obsah pro nový start hry
+    gameGridElement.innerHTML = '';
 
     // Nastavení velikosti pole podle obtížnosti
     const difficulty = getDifficulty();
@@ -45,28 +45,42 @@ function createGameGrid(rows, cols) {
 }
 
 
-// Inicializace prázdné mřížky
+//prázdné mřížky
 function initializeGameGrid(rows, cols) {
     gameGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
 }
 
-// Funkce pro inicializaci sledování navštívených buněk
+//sledování navštívených buněk
 function initializeVisited(rows, cols) {
     visited = Array.from({ length: rows }, () => Array(cols).fill(false));
 }
 
-// Funkce pro zpracování kliknutí na buňku
+// zpracování kliknutí na buňku
 function handleCellClick(row, col, cellElement) {
     if (gameOver || cellElement.textContent === '🚩') return;
+
+    const cellValue = gameGrid[row][col];
 
     if (isFirstClick) {
         startTimer();
         createMinesWithSafeArea(row, col, gameGrid.length, gameGrid[0].length, mineCount);
         calculateNumbers(gameGrid.length, gameGrid[0].length);
         isFirstClick = false;
+
+        // Zajistit, že první kliknutí odhalí bezpečnou oblast
+        if (cellValue === 0) {
+            revealEmptyCells(row, col);
+        } else {
+            revealCell(row, col, cellValue);
+        }
+        return;
     }
 
-    const cellValue = gameGrid[row][col];
+    if (visited[row][col] && cellValue !== 0) {
+        // Pokud už byla buňka odhalena a není prázdná, nic nedělej
+        return;
+    }
+
     if (cellValue === 'M') {
         cellElement.textContent = '💣';
         cellElement.style.backgroundColor = 'red';
@@ -74,17 +88,19 @@ function handleCellClick(row, col, cellElement) {
         return;
     }
 
-    cellElement.textContent = cellValue === 0 ? '' : cellValue;
-    cellElement.style.backgroundColor = '#ddd';
-
     if (cellValue === 0) {
         revealEmptyCells(row, col);
+    } else {
+        revealCell(row, col, cellValue);
     }
 
     checkWin();
 }
 
-// Funkce pro ukončení hry
+
+
+
+// ukončení hry
 function endGame(win) {
     gameOver = true;
     stopTimer();
@@ -104,7 +120,7 @@ function endGame(win) {
 }
 
 
-// Funkce pro generování min s bezpečnou oblastí
+// generování min s bezpečnou oblastí
 function createMinesWithSafeArea(startRow, startCol, rows, cols, mineCount) {
     initializeGameGrid(rows, cols);
     let minesPlaced = 0;
@@ -152,7 +168,6 @@ function calculateNumbers(rows, cols) {
     }
 }
 
-// Funkce pro odhalení okolních prázdných buněk
 function revealEmptyCells(row, col) {
     const directions = [
         [-1, -1], [-1, 0], [-1, 1],
@@ -160,30 +175,47 @@ function revealEmptyCells(row, col) {
         [1, -1], [1, 0], [1, 1]
     ];
 
-    if (visited[row][col]) return;
-    visited[row][col] = true;
+    const stack = [[row, col]];
 
-    directions.forEach(([dx, dy]) => {
-        const newRow = row + dx;
-        const newCol = col + dy;
+    while (stack.length > 0) {
+        const [currentRow, currentCol] = stack.pop();
 
         if (
-            newRow >= 0 && newRow < gameGrid.length &&
-            newCol >= 0 && newCol < gameGrid[0].length &&
-            !visited[newRow][newCol] && gameGrid[newRow][newCol] !== 'M'
+            currentRow >= 0 && currentRow < gameGrid.length &&
+            currentCol >= 0 && currentCol < gameGrid[0].length &&
+            !visited[currentRow][currentCol]
         ) {
-            const adjacentCell = document.getElementById(`cell-${newRow}-${newCol}`);
-            adjacentCell.textContent = gameGrid[newRow][newCol] === 0 ? '' : gameGrid[newRow][newCol];
-            adjacentCell.style.backgroundColor = '#ddd';
+            const cellValue = gameGrid[currentRow][currentCol];
+            revealCell(currentRow, currentCol, cellValue);
 
-            if (gameGrid[newRow][newCol] === 0) {
-                revealEmptyCells(newRow, newCol);
+            if (cellValue === 0) {
+                directions.forEach(([dx, dy]) => {
+                    const newRow = currentRow + dx;
+                    const newCol = currentCol + dy;
+                    if (
+                        newRow >= 0 && newRow < gameGrid.length &&
+                        newCol >= 0 && newCol < gameGrid[0].length &&
+                        !visited[newRow][newCol]
+                    ) {
+                        stack.push([newRow, newCol]);
+                    }
+                });
             }
         }
-    });
+    }
 }
 
-// Kontrola vítězství
+// Funkce pro odhalení buňky
+function revealCell(row, col, cellValue) {
+    const cellElement = document.getElementById(`cell-${row}-${col}`);
+    if (!visited[row][col]) {
+        cellElement.textContent = cellValue === 0 ? '' : cellValue;
+        cellElement.style.backgroundColor = '#ddd';
+        visited[row][col] = true;
+    }
+}
+
+// Kontrola
 function checkWin() {
     let allCellsCorrect = true;
 
@@ -203,21 +235,24 @@ function checkWin() {
     }
 
     if (allCellsCorrect) {
-        endGame(true); // Konec hry - vítězství
+        endGame(true); // Konec hry - win
     }
 }
 
-// Přidání posluchače pro pravé kliknutí na každou buňku
+// right click na vlajku
 function handleRightClick(event, row, col, cellElement) {
     event.preventDefault();
 
-    if (gameOver || visited[row][col]) return; // Pokud je buňka již navštívená, nemůžeme ji označit vlajkou
+    // Povolit vlajku pouze na neodhalené pole
+    if (gameOver || visited[row][col]) return;
 
     if (cellElement.classList.contains('flagged')) {
+        // Odebrání vlajky
         cellElement.classList.remove('flagged');
         cellElement.textContent = '';
         flagsPlaced--;
     } else {
+        // Přidání vlajky (pokud je k dispozici)
         if (flagsPlaced < mineCount) {
             cellElement.classList.add('flagged');
             cellElement.textContent = '🚩';
@@ -231,6 +266,7 @@ function handleRightClick(event, row, col, cellElement) {
     updateFlagCounter();
 }
 
+
 // sound u vlajky
 function playSound(action) {
     const sounds = {
@@ -243,13 +279,13 @@ function playSound(action) {
     });
 }
 
-// Funkce pro aktualizaci počitadla vlajek
+// počítadlo vlajek
 function updateFlagCounter() {
     const flagCounterElement = document.getElementById('flag-counter');
     flagCounterElement.textContent = `Flags: ${flagsPlaced}/${mineCount}`;
 }
 
-// Funkce pro výběr obtížnosti
+//výběr obtížnosti
 function setDifficulty(difficulty) {
     let rows, cols;
     switch (difficulty) {
@@ -309,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Přidání výběru obtížnosti
+    //výběr obtížnosti
     const difficultySelector = document.createElement('select');
     difficultySelector.id = 'difficulty-selector';
 
@@ -337,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
     timerElement.textContent = 'Time: 0s';
     container.insertBefore(timerElement, container.firstChild);
 
-    // Inicializace hry
     setDifficulty('easy'); // Defaultní obtížnost
 });
 
@@ -354,7 +389,7 @@ function sendScoreToServer(difficulty, time) {
             time: time
         }),
     })
-    .then(response => response.text())  // Změníme na text, abychom viděli, co server vrací
+    .then(response => response.text())
     .then(data => {
         console.log("Server response:", data);  // Vypíše odpověď serveru
     
@@ -384,5 +419,5 @@ function onGameWin(difficulty, elapsedTime) {
 
 function getDifficulty() {
     const difficultySelector = document.getElementById('difficulty-selector');
-    return difficultySelector ? difficultySelector.value : 'easy'; // Pokud není vybraná obtížnost, vrátí 'easy'
+    return difficultySelector ? difficultySelector.value : 'easy'; // Pokud není vybraná obtížnost, vrátí easy
 }

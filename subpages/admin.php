@@ -63,13 +63,40 @@ if (!$guestsResult) {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
     $adminToRemove = trim($_POST["remove_admin"]);
     
-    // Odebrání admina z databáze
-    $removeAdminSql = "DELETE FROM admins WHERE nick_name = ?";
-    $stmt = mysqli_prepare($conn, $removeAdminSql);
+    // Získání ID uživatele na základě přezdívky
+    $getUserIdSql = "SELECT id FROM users WHERE nick_name = ?";
+    $stmt = mysqli_prepare($conn, $getUserIdSql);
     mysqli_stmt_bind_param($stmt, "s", $adminToRemove);
     mysqli_stmt_execute($stmt);
-    
-    $message = "Admin removed.";
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
+
+    if ($user) {
+        $userId = $user['id'];
+
+        // Smazání všech záznamů z tabulky leaderboard
+        $deleteLeaderboardSql = "DELETE FROM leaderboard WHERE user_id = ?";
+        $stmt = mysqli_prepare($conn, $deleteLeaderboardSql);
+        mysqli_stmt_bind_param($stmt, "i", $userId);
+        mysqli_stmt_execute($stmt);
+
+        // Smazání admina z tabulky admins
+        $removeAdminSql = "DELETE FROM admins WHERE nick_name = ?";
+        $stmt = mysqli_prepare($conn, $removeAdminSql);
+        mysqli_stmt_bind_param($stmt, "s", $adminToRemove);
+        mysqli_stmt_execute($stmt);
+
+        // Smazání uživatele z tabulky users
+        $deleteUserSql = "DELETE FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $deleteUserSql);
+        mysqli_stmt_bind_param($stmt, "i", $userId);
+        mysqli_stmt_execute($stmt);
+
+        $message = "Admin and their progress have been removed.";
+    } else {
+        $message = "Admin not found.";
+    }
+
     // Obnovení seznamu adminů
     $adminsResult = mysqli_query($conn, $adminsQuery);
 }
@@ -77,18 +104,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_admin"])) {
 // Zpracování odebrání hosta
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
     $userToRemove = trim($_POST["remove_user"]);
-    
-    // Odebrání uživatele z databáze
-    $removeUserSql = "DELETE FROM users WHERE nick_name = ?";
-    $stmt = mysqli_prepare($conn, $removeUserSql);
+
+    // Získání ID uživatele na základě přezdívky
+    $getUserIdSql = "SELECT id FROM users WHERE nick_name = ?";
+    $stmt = mysqli_prepare($conn, $getUserIdSql);
     mysqli_stmt_bind_param($stmt, "s", $userToRemove);
     mysqli_stmt_execute($stmt);
-    
-    $message = "User removed.";
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
+
+    if ($user) {
+        $userId = $user['id'];
+
+        // Smazání všech záznamů z tabulky leaderboard
+        $deleteLeaderboardSql = "DELETE FROM leaderboard WHERE user_id = ?";
+        $stmt = mysqli_prepare($conn, $deleteLeaderboardSql);
+        mysqli_stmt_bind_param($stmt, "i", $userId);
+        mysqli_stmt_execute($stmt);
+
+        // Smazání uživatele z tabulky users
+        $deleteUserSql = "DELETE FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $deleteUserSql);
+        mysqli_stmt_bind_param($stmt, "i", $userId);
+        mysqli_stmt_execute($stmt);
+
+        $message = "User and their progress have been removed.";
+    } else {
+        $message = "User not found.";
+    }
+
     // Obnovení seznamu hostů
     $guestsResult = mysqli_query($conn, $guestsQuery);
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="cs">
@@ -96,6 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper Game - Administration</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
@@ -153,7 +203,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["remove_user"])) {
     </section>
 </main>
 
-<?php include "../php/footer.php" ?>
+<?php include "../footer/footer.php" ?>
 
 <script>
     // Počkej 3 sekundy a pak zprávu skryj

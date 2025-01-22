@@ -175,3 +175,8 @@ footer{
     position: fixed;
     align-self: center;
 }
+
+a {
+    text-decoration: none;
+    color: black;
+}
