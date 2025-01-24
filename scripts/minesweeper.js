@@ -185,7 +185,17 @@ function revealEmptyCells(row, col) {
             currentCol >= 0 && currentCol < gameGrid[0].length &&
             !visited[currentRow][currentCol]
         ) {
+            const cellElement = document.getElementById(`cell-${currentRow}-${currentCol}`);
             const cellValue = gameGrid[currentRow][currentCol];
+
+            // Pokud má buňka vlajku, odebere se
+            if (cellElement.classList.contains('flagged')) {
+                cellElement.classList.remove('flagged');
+                cellElement.textContent = '';
+                flagsPlaced--; // Aktualizace počítadla vlajek
+                updateFlagCounter();
+            }
+
             revealCell(currentRow, currentCol, cellValue);
 
             if (cellValue === 0) {
