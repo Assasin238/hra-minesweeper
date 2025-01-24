@@ -105,6 +105,18 @@ header {
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
 }
 
+.easy #game-grid td {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+}
+
+.medium #game-grid td {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+}
+
 #game-grid td:hover {
     background-color: #555;
     transform: scale(1.05);

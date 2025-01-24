@@ -328,6 +328,21 @@ function setDifficulty(difficulty) {
 
     const timerElement = document.getElementById('timer');
     timerElement.textContent = 'Time: 0s';
+
+    //odsaď až po konec funkce tak k css spojeno na velikost hry
+    const gameContainer = document.getElementById('game-container');
+    const difficultySelect = document.querySelector('select'); // Výběr obtížnosti
+
+    // Funkce pro změnu třídy podle obtížnosti
+    function updateDifficultyClass() {
+        const selectedDifficulty = difficultySelect.value; // Získání aktuální obtížnosti
+        gameContainer.className = ''; // Odstranění všech existujících tříd
+        gameContainer.classList.add(selectedDifficulty); // Přidání nové třídy
+    }
+
+    difficultySelect.addEventListener('change', updateDifficultyClass);
+
+    updateDifficultyClass();
 }
 
 // Spuštění časovače
