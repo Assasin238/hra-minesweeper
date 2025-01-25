@@ -22,10 +22,10 @@ header {
     display: flex;
     justify-content: space-between; /* Odsazení mezi logem a odkazy */
     align-items: center;
-    position: fixed; /* Upevnění navigace nahoře */
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 10; /* Aby byl nad ostatními elementy */
+    z-index: 10; /* Aby byl nad ostatními */
 }
 
 
@@ -146,12 +146,12 @@ a {
 
 /* Styling for the navigation bar */
 .navbar {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
 /* Styling for the logo in the navigation bar */

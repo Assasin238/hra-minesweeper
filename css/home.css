@@ -9,11 +9,6 @@ body{
     background-color: rgb(128, 141, 128);
 }
 
-/* Remove bullets from list items */
-li {
-    list-style: none;
-}
-
 /* Styling for links */
 a {
     text-decoration: none;
