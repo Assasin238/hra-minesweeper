@@ -34,7 +34,7 @@ Tato webová aplikace je implementací klasické hry **Minesweeper (Hledání mi
 ## 📥 Instalace
 1. Naklonujte repozitář:
    ```sh
-   git clone https://github.com/uzivatel/minesweeper.git
+   https://github.com/Assasin238238/hra-minesweeper.git
    ```
 2. Nahrajte soubory na váš server.
 3. Vytvořte databázi a importujte soubor **database.sql**.
