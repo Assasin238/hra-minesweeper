@@ -1,7 +1,7 @@
 # Minesweeper Game
 
 ## Popis projektu
-Tato webová aplikace je implementací klasické hry **Minesweeper (Hledání min)**. Hráč odkrývá pole na mřížce a snaží se vyhnout minám. Čísla na odkrytých polích indikují počet min v okolních políčkách. 
+Tato webová aplikace je implementací klasické hry **Minesweeper (Miny)**. Hráč odkrývá pole na mřížce a snaží se vyhnout minám. Čísla na odkrytých polích indikují počet min v okolních políčkách. 
 
 **Cílem hry** je odkrýt všechna bezpečná pole a správně označit miny pomocí vlajek.
 
@@ -61,4 +61,4 @@ Data o hráčích, statistikách a výsledcích jsou ukládána v **MySQL datab�
 ---
 
 ## 👤 Autor
-Vyvinuto uživatelem **Assasin238** a testovacími hráči.
+Vytvořeno **Assasin238** & otestováno Testery <3
