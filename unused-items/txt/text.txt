@@ -5,8 +5,7 @@ user icon - aby zmizel login/register když už jsi s účtem - 1. priorita /upd
 lepší design k minám - 2. priorita
 fixnout vlajky zase - ted fungujou tak že jdou položit na pole kde je mina pouze či na pole která většinou ti odkryjou víc políček najednou - 3. priorita
 možná přidat možnost odebrat své skóre
-upload k vyšinka db - second
-asi nastavit i jazyk cz/en protože ty jazyky tady mixuju jak opica xdddd 
+asi nastavit i jazyk cz/en protože ty jazyky tady mixuju jak opica nebo aspoň poladit ty komenty xdddd 
 
 leaderboard co zadat když ve škole:
 CREATE TABLE leaderboard (
@@ -22,7 +21,6 @@ CREATE TABLE leaderboard (
 hrací pole, předělat na tyto velikosti:
 easy: 450px w 360px h
 medium: 540px w 420px h
-large: 600px w 500px h
 
 
 checknout klíč u nicknames -- do users
@@ -36,4 +34,6 @@ CREATE TABLE admins (
     FOREIGN KEY (nick_name) REFERENCES users(nick_name) ON DELETE CASCADE
 );
 
-jakmile tento projekt bude done tak implementovat prvky do své stránky a probably i upcoming website O_o - reg/log; db; leaderboard; mines; atd..... the more you know, you never know xddd
+the more you know, you never know xddd
+
+// update většina byla implementována a v last updatu jen dělám uprávy v komentech <3, kdyby někdo chtěl zkusit tento projekt tak tu nechávám na ulehčení pár řádků které vložte do mysqlka pro vytvoření daného table, users table si vytvořte sami :D v database.php je pár mentions

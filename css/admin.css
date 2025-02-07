@@ -9,20 +9,17 @@ body{
     background-color: rgb(128, 141, 128);
 }
 
-/* Styling for links */
 a {
     text-decoration: none;
     font-size: 1rem;
     color: black;
 }
 
-/* Header styling */
 header {
     position: relative;
     padding: 0 2rem;
 }
 
-/* Styling for the navigation bar */
 .navbar {
     width: 100%;
     height: 60px;
@@ -33,19 +30,16 @@ header {
     justify-content: space-between;
 }
 
-/* Styling for the logo in the navigation bar */
 .navbar .logo a {
     font-size: 1.5rem;
     font-weight: bold;
 }
 
-/* Styling for the links in the navigation bar */
 .navbar .links {
     display: flex;
     gap: 2rem;
 }
 
-/* Styling for the action button */
 .action_btn {
     background-color: rgb(69, 71, 69);
     color: #fff;
@@ -69,21 +63,18 @@ header {
 }
 
 
-/* Main container */
 main {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Section titles */
 h1, h2 {
     text-align: center;
     margin-bottom: 1rem;
     color: #222;
 }
 
-/* User list section */
 .user-card {
     display: flex;
     justify-content: space-between;
@@ -109,7 +100,6 @@ h1, h2 {
     color: #444;
 }
 
-/* CSS */
 .delete-btn {
     background-color: #d9534f;
     color: white;
@@ -185,7 +175,6 @@ h1, h2 {
     text-align: center;
 }
 
-/* Footer styling */
 footer{
 
     color: black;

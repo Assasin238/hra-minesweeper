@@ -1,4 +1,3 @@
-/* Resetování stylů */
 * {
     margin: 0;
     padding: 0;
@@ -6,9 +5,8 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-/* Tělo stránky */
 body {
-    background-color: rgb(128, 141, 128); /* Nové pozadí */
+    background-color: rgb(128, 141, 128);
     color: #ecf0f1;
     display: flex;
     justify-content: center;
@@ -17,7 +15,6 @@ body {
     padding: 20px;
 }
 
-/* Navigační lišta */
 .navbar {
     width: 100%;
     height: 60px;
@@ -28,7 +25,6 @@ body {
     justify-content: space-between;
 }
 
-/* Logo v navigační liště */
 .navbar .logo a {
     font-size: 1.5rem;
     font-weight: bold;

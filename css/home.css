@@ -9,20 +9,17 @@ body{
     background-color: rgb(128, 141, 128);
 }
 
-/* Styling for links */
 a {
     text-decoration: none;
     font-size: 1rem;
     color: black;
 }
 
-/* Header styling */
 header {
     position: relative;
     padding: 0 2rem;
 }
 
-/* Styling for the navigation bar */
 .navbar {
     width: 100%;
     height: 60px;
@@ -33,19 +30,16 @@ header {
     justify-content: space-between;
 }
 
-/* Styling for the logo in the navigation bar */
 .navbar .logo a {
     font-size: 1.5rem;
     font-weight: bold;
 }
 
-/* Styling for the links in the navigation bar */
 .navbar .links {
     display: flex;
     gap: 2rem;
 }
 
-/* Styling for the introduction section */
 section#welcome {
     height: calc(100vh - 60px);
     display: flex;
@@ -56,13 +50,11 @@ section#welcome {
     color: #fff;
 }
 
-/* Styling for the heading in the introduction section */
 #welcome h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
 }
 
-/* Styling for the action button */
 .action_btn {
     background-color: rgb(69, 71, 69);
     color: #fff;
@@ -85,7 +77,6 @@ section#welcome {
     scale: 0.95;
 }
 
-/* Styling for the play button */
 #playBTN {
     margin-top: 50px;
     width: 150px;

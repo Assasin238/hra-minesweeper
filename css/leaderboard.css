@@ -1,4 +1,3 @@
-/* Reset a základní stylování */
 * {
     margin: 0;
     padding: 0;
@@ -9,10 +8,9 @@
 body {
     background-color: rgb(128, 141, 128);
     color: black;
-    padding-bottom: 60px; /* Prostor pro pevný footer */
+    padding-bottom: 60px; 
 }
 
-/* Styling for links */
 a {
     text-decoration: none;
     font-size: 1rem;
@@ -42,7 +40,6 @@ header {
     text-decoration: none;
 }
 
-/* Leaderboard Container */
 .leaderboard-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; /* Tři sloupce stejné šířky */
@@ -78,7 +75,6 @@ header {
     background-color: #666;
 }
 
-/* Action Button */
 .action_btn {
     display: inline-block;
     background-color: rgb(69, 71, 69);
@@ -118,7 +114,6 @@ h1 {
     color: #ecf0f1;
 }
 
-/* Footer */
 footer {
     background: transparent;
     color: black;

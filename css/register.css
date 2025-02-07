@@ -1,11 +1,9 @@
-/* Resetování stylů */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Styl těla stránky */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0a0a0a, #2c2c2c);
@@ -17,9 +15,8 @@ body {
     padding: 20px;
 }
 
-/* Rodičovský kontejner pro .container a .error-container */
 .parent-container {
-    position: relative; /* .error-container bude umístěn relativně k parent-container */
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -33,10 +30,10 @@ body {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
     padding: 40px 50px;
     width: 100%;
-    margin-bottom: 20px; /* Přidání mezery mezi .container a .error-container */
+    margin-bottom: 20px;
 }
 
-/* Formulářové prvky */
+/* Formulář*/
 .form-label {
     font-size: 16px;
     font-weight: 600;
@@ -96,7 +93,7 @@ body {
     transform: translateY(2px);
 }
 
-/* Kontejner pro chybové zprávy */
+/* Kontejner pro chyby */
 .error-container {
     position: absolute;
     top: 100%; /* Umístí chyby pod .container */
@@ -109,7 +106,6 @@ body {
     margin-top: 10px; /* Malá mezera mezi formulářem a chybovými zprávami */
 }
 
-/* Styl chybových hlášek */
 .alert {
     margin-bottom: 10px;
     padding: 15px;
@@ -163,6 +159,6 @@ a {
     }
 
     .error-container {
-        margin-top: 30px; /* Zvýšení mezery pro menší obrazovky */
+        margin-top: 30px;
     }
 }

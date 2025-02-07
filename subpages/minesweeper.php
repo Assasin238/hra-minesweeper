@@ -81,10 +81,6 @@ if ($stmt) {
             <a href="leaderboard.php" class="action_btn">leaderboard</a>
             <!-- Logout button -->
             <a href="logout.php" class="action_btn" id="logout-btn">Logout</a>
-            <!-- Toggle button for responsive menu -->
-            <div class="toggle_btn">
-                <i class="fa-solid fa-bars"></i>
-            </div>
         </div>
 
     </header>

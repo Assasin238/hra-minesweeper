@@ -5,10 +5,10 @@ if (!isset($_SESSION["user"])) {
     exit();
 }
 
-require_once "subpages/database.php"; // Připojení k databázi
+require_once "subpages/database.php"; // Připojení k db
 
 $isAdmin = false;
-$nickName = strtolower($_SESSION["user"]); // Převod na malá písmena pro porovnání bez ohledu na velikost písmen
+$nickName = strtolower($_SESSION["user"]); // Převádí na malá písmena
 
 $sql = "SELECT * FROM admins WHERE LOWER(nick_name) = LOWER(?)";
 $stmt = mysqli_prepare($conn, $sql);
@@ -41,6 +41,7 @@ if ($stmt) {
         <?php if ($isAdmin): ?>
             <a href="subpages/admin.php" class="action_btn" id="admin-btn">Admin Panel</a>
         <?php endif; ?>
+        <a href="subpages/leaderboard.php" class="action_btn">leaderboard</a>
         <!-- Logout button -->
         <a href="subpages/logout.php" class="action_btn" id="logout-btn">Logout</a>
     </div>
@@ -49,7 +50,6 @@ if ($stmt) {
     <div class="container">
         <section id="welcome">
             <h1><span class="auto-type"></span></h1>
-            <!-- Button to start playing the game -->
             <a href="subpages/minesweeper.php" class="action_btn" id="playBTN">PLAY</a>
         </section>
     </div>

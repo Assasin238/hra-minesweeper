@@ -5,31 +5,63 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-
 body {
     background-color: rgb(128, 141, 128);
-    display: flex; /* Pro centrování obsahu */
-    justify-content: center; /* Centrovat horizontálně */
-    align-items: center; /* Centrovat vertikálně */
-    min-height: 100vh; /* Výška stránky */
-    margin: 0; /* Zrušit okraje stránky */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
-/* Header styling */
 header {
-    width: 100%;
-    padding: 1rem 2rem; /* Vnitřní mezery */
-    display: flex;
-    justify-content: space-between; /* Odsazení mezi logem a odkazy */
-    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 10; /* Aby byl nad ostatními */
+    width: 100%;
+    padding: 0 2rem;
+    background-color: rgb(128, 141, 128);
+    z-index: 1000; /*navbar je nad ostatním obsahem */
 }
 
+.navbar {
+    width: 100%;
+    height: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-/* Styling for the action button */
+.navbar .logo a {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar .links {
+    display: flex;
+    gap: 2rem;
+}
+
+/* Hrací pole - pod navbar */
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(145deg, rgba(45, 45, 45, 0.95), rgba(60, 60, 60, 0.95));
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 600px;
+    color: #ecf0f1;
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+    margin-top: 80px; /* Posun dolů pod navbar */
+}
+
 .action_btn {
     background-color: rgb(69, 71, 69);
     color: #fff;
@@ -52,26 +84,6 @@ header {
     scale: 0.95;
 }
 
-/* Kontejner hry */
-#game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    background: linear-gradient(145deg, rgba(45, 45, 45, 0.95), rgba(60, 60, 60, 0.95));
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    width: 90%;
-    max-width: 600px;
-    color: #ecf0f1;
-    text-align: center;
-    animation: fadeIn 1s ease-out;
-    margin: 5rem auto 0; /* Posun dolů pod navigaci */
-}
-
-
-/* Počítadlo vlajek */
 #flag-counter {
     font-size: 1.5rem;
     font-weight: bold;
@@ -82,8 +94,6 @@ header {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-
-/* Herní mřížka */
 #game-grid {
     border-collapse: collapse;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
@@ -128,9 +138,8 @@ header {
     transform: scale(0.95);
 }
 
-footer{
+footer {
     background: transparent;
-    /*color: #ccc;*/
     color: black;
     text-align: center;
     bottom: 0;
@@ -142,26 +151,4 @@ a {
     text-decoration: none;
     font-size: 1rem;
     color: black;
-}
-
-/* Styling for the navigation bar */
-.navbar {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Styling for the logo in the navigation bar */
-.navbar .logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-/* Styling for the links in the navigation bar */
-.navbar .links {
-    display: flex;
-    gap: 2rem;
 }
