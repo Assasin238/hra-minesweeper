@@ -33,7 +33,7 @@ Tato webová aplikace byla vytvořena jako školní projekt a je implementací k
 ## 📥 Instalace
 1. Naklonujte repozitář:
    ```sh
-   https://github.com/Assasin238238/hra-minesweeper.git
+   https://github.com/Assasin238/hra-minesweeper.git
    ```
 2. Nahrajte soubory na váš server.
 3. Vytvořte databázi.
